@@ -23,7 +23,7 @@ module.exports = {
         `./src/app.js`
     ],
     output: {
-        path: __dirname + '/lib',
+        path: __dirname + '/dist',
         filename: outputfile,
         libraryTarget: 'umd',
         umdNamedDefine: true
