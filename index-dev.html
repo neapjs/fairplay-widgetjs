@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>View JS Test</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<link rel="stylesheet" href="/css/fairplay.css">
+</head>
+<body>
+	<div id="wrapper" class="clearfix" style="display: block;">
+		<div id="container">
+			<neap-widget v-bind:jobads="allFilteredJobAds"></neap-widget>
+		</div> 
+	</div>
+	<script src="/app.js"></script>
+	<script type="text/javascript">
+		fairplay.start({ mode:'dev' })
+	</script>
+</body>
+</html>

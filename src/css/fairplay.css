@@ -1,0 +1,816 @@
+/* 1. START: Global */
+body {
+    font-family: 'Open Sans', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-size: 14px;
+}
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box
+}
+
+a {
+    color: #4eb749;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+
+a:hover,
+a:active {
+    color: #4eb749;
+    text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Open Sans', Arial, sans-serif;
+    font-weight: 300;
+    margin-top: 0;
+    color: #333;
+}
+
+h1 {
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+
+*:focus,
+a:focus,
+input:focus,
+.btn:focus {
+    outline: 0;
+    outline: none;
+}
+
+ul,
+ol {
+    padding-left: 23px;
+}
+
+html,
+body {}
+
+body {
+    color: #868686;
+    padding-top: 72px;
+}
+
+#wrapper {}
+
+#side-left {
+    margin-top: 10px;
+}
+
+/* 1. END: Global */
+
+
+
+/*BOOTSTRAP*/
+.btn {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: 900;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn.active:focus {
+    outline: thin dotted;
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px
+}
+
+.btn:hover,
+.btn:focus {
+    color: #333;
+    text-decoration: none
+}
+
+.btn:active,
+.btn.active {
+    outline: 0;
+    background-image: none;
+    -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125)
+}
+
+.btn.disabled,
+.btn[disabled],
+fieldset[disabled] .btn {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: .65;
+    filter: alpha(opacity=65);
+    -webkit-box-shadow: none;
+    box-shadow: none
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #ff931e;
+    border-color: #ff8704
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.open>.dropdown-toggle.btn-primary {
+    color: #fff;
+    background-color: #ea7a00;
+    border-color: #c66700
+}
+
+.btn-primary:active,
+.btn-primary.active,
+.open>.dropdown-toggle.btn-primary {
+    background-image: none
+}
+
+.btn-primary.disabled,
+.btn-primary[disabled],
+fieldset[disabled] .btn-primary,
+.btn-primary.disabled:hover,
+.btn-primary[disabled]:hover,
+fieldset[disabled] .btn-primary:hover,
+.btn-primary.disabled:focus,
+.btn-primary[disabled]:focus,
+fieldset[disabled] .btn-primary:focus,
+.btn-primary.disabled:active,
+.btn-primary[disabled]:active,
+fieldset[disabled] .btn-primary:active,
+.btn-primary.disabled.active,
+.btn-primary[disabled].active,
+fieldset[disabled] .btn-primary.active {
+    background-color: #ff931e;
+    border-color: #ff8704
+}
+
+.btn-primary .badge {
+    color: #ff931e;
+    background-color: #fff
+}
+
+.col-md-3,
+.col-sm-4,
+.col-md-9,
+.col-sm-8, 
+.col-xs-12 {
+    position: relative;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px
+}
+
+.col-xs-12 {
+    float: left
+}
+
+.col-xs-12 {
+    width: 100%
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s
+}
+
+.form-control:focus {
+    border-color: #66afe9;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, 0.6);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, 0.6)
+}
+
+.form-control::-moz-placeholder {
+    color: #777;
+    opacity: 1
+}
+
+.form-control:-ms-input-placeholder {
+    color: #777
+}
+
+.form-control::-webkit-input-placeholder {
+    color: #777
+}
+
+.form-control[disabled],
+.form-control[readonly],
+fieldset[disabled] .form-control {
+    cursor: not-allowed;
+    background-color: #eee;
+    opacity: 1
+}
+
+textarea.form-control {
+    height: auto
+}
+
+.hidden {
+    display: none !important;
+    visibility: hidden !important
+}
+
+@media (max-width:767px) {
+
+    .hidden-xs {
+        display: none !important
+    }
+}
+
+@media (min-width:768px) {
+
+    .col-sm-4,
+    .col-sm-8 {
+        float: left
+    }
+
+    .col-sm-4 {
+        width: 33.33333333%
+    }
+
+    .col-sm-8 {
+        width: 66.66666667%
+    }
+}
+
+@media (min-width:992px) {
+
+    .col-md-3,
+    .col-md-9 {
+        float: left
+    }
+
+    .col-md-9 {
+        width: 75%
+    }
+
+    .col-md-3 {
+        width: 25%
+    }
+}
+
+/*BOOTSTRAP*/
+
+
+
+/* 2. START: Global */
+
+#content {}
+
+#content ul.tabs {
+    display: none;
+}
+
+#content ul.tabs li {
+    background: transparent;
+    border: 0;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+ul#side-drop-menu li#AdvancedSearchFilter_PnlCompany {
+    display: none;
+}
+
+#side-drop-menu,
+#side-drop-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#side-drop-menu {
+    margin-bottom: 2em;
+    margin-top: 2em;
+}
+
+#side-drop-menu li {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.search-query p,
+#side-drop-menu a {
+    display: block;
+    margin: 0;
+    padding: 10px 5px;
+    border-top: 1px solid #E8E8E8;
+}
+
+#side-drop-menu ul li a {
+    color: #868686;
+}
+
+#side-drop-menu a:hover {
+    text-decoration: none;
+}
+
+#side-drop-menu ul li a {}
+
+.btn:focus {
+    outline: 0;
+    outline: none;
+}
+
+.btn {
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-shadow: none;
+}
+
+.btn-primary {
+    background-color: rgba(0, 0, 0, 0);
+    border-color: #4eb749;
+    border-radius: 2em;
+    border-width: 2px;
+    color: #333333;
+    font-family: "Open Sans", Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    padding: 12px 48px;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.open>.dropdown-toggle.btn-primary {
+    background-color: #4eb749;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    border-color: transparent;
+    background-color: #4eb749;
+}
+
+.form-control::-moz-placeholder {
+    color: #868686;
+    opacity: 1;
+}
+
+.form-control::-webkit-input-placeholder {
+    color: #868686;
+    opacity: 1;
+}
+
+.form-control:-moz-placeholder {
+    color: #868686;
+    opacity: 1;
+}
+
+.form-control:-ms-input-placeholder {
+    color: #868686;
+    opacity: 1;
+}
+
+.form-control:focus {
+    border-color: #888;
+    outline: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.hidden {
+    display: none !important
+}
+
+.collapse-menu {
+    display: none;
+}
+
+.expand-menu {
+    display: block;
+}
+
+.content-holder {}
+
+.content-holder h1 {
+    margin: 0 0 1em 0;
+    text-transform: uppercase;
+    font-size: 40px;
+}
+
+.description-holder .locandsalary {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    font-size: 13px;
+    overflow: hidden;
+}
+
+.description-holder .locandsalary span {
+    display: block;
+    margin: 0;
+}
+
+.description-holder {
+    clear: both;
+    display: inline-block;
+    margin: 0.4em 0;
+    overflow: hidden;
+    width: 100%;
+}
+
+.description-holder .description-logo {
+    display: none;
+}
+
+.description-holder ul,
+.description-holder p {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.description-holder .job-checkbox {
+    float: right;
+    text-align: right;
+    width: 5%;
+}
+
+.description-holder .job-checkbox input[type-checkbox] {
+    max-width: 100%;
+}
+
+.description-holder .locandsalary {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    float: left;
+    padding: 0 5% 0 0;
+    width: 35%;
+}
+
+.description-holder .description-text {
+    float: left;
+    font-size: 13px;
+    width: 60%;
+}
+
+.description-holder .short-description-text {
+    float: left;
+    font-size: 13px;
+}
+
+.description-holder .locandsalary .neap-result-area {
+    display: none
+}
+
+.description-holder .locandsalary .neap-result-salary span {
+    display: inline-block;
+    padding: 0
+}
+
+.job-breadcrumbs {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    clear: both;
+    font-size: small;
+}
+
+.job-holder {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-transition: 0.2s linear;
+    -moz-transition: 0.2s linear;
+    -o-transition: 0.2s linear;
+    transition: 0.2s linear;
+    clear: both;
+    border: solid 1px #D5D5D5;
+    background: #FAFAFA;
+    margin: 0 0 1em 0;
+    padding: 0.8em 1em;
+    width: 100%;
+    border-radius: 5px;
+}
+
+.job-holder:hover {
+    box-shadow: 1px 1px 6px #C1BAC1;
+    background: #fff;
+}
+
+.job-holder a {
+    color: #666666;
+    font-weight: bold;
+}
+
+.job-holder a:hover {
+    color: #333;
+}
+
+.job-holder .job-toplink a {
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+    color: #666666;
+    background: transparent;
+    display: inline-block;
+    font-family: 'Open Sans', Arial, sans-serif;
+    font-size: 1.2em;
+    font-weight: 600;
+    line-height: 1.3em;
+}
+
+.job-holder:hover .job-toplink a {
+    color: #000;
+}
+
+.job-toplink {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    float: left;
+    padding: 0 5% 0 0;
+    width: 80%;
+    width: 400px\9;
+}
+
+.job-toplink .nameofcompany {
+    display: none;
+    font-size: small;
+}
+
+.job-rightlinks {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    float: right;
+    font-size: small;
+    text-align: right;
+    width: 20%;
+    width: 150px\9;
+}
+
+.mini-new-buttons {
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+    border-radius: 2em;
+    cursor: pointer;
+    display: inline-block;
+    box-shadow: none !important;
+    border: 2px solid #4AB849 !important;
+    text-decoration: none;
+}
+
+.mini-new-buttons:hover {
+    color: #fff !important;
+    background-color: #4AB849;
+    border-color: #4AB849;
+}
+
+input.mini-new-buttons {
+    -webkit-appearance: none;
+}
+
+.neap-salary-type {
+    padding-left: 1em;
+    padding-right: 1em;
+    margin-top: 1.5em;
+    margin-bottom: 1.5em
+}
+
+.neap-salary-type select {
+    display: block;
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box
+}
+
+.neap-salary-bands {
+    display: table;
+    padding-left: 1em;
+    padding-right: 1em;
+    margin-bottom: 1.5em
+}
+
+.neap-salary-bands-error {
+    display: table;
+    padding-left: 1em;
+    padding-right: 1em;
+    margin-bottom: 1.5em;
+    color: red;
+}
+
+.neap-salary-min,
+.neap-salary-max {
+    display: table-cell;
+    position: relative;
+    width: 40%
+}
+
+.neap-salary-min label,
+.neap-salary-max label {
+    position: absolute;
+    left: -10000em
+}
+
+.neap-salary-currency {
+    position: absolute;
+    top: 51%;
+    left: 1em;
+    -webkit-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    transform: translateY(-50%)
+}
+
+.neap-salary-bands .neap-salary-min input,
+.neap-salary-bands .neap-salary-max input {
+    display: block;
+    width: 100%;
+    padding-left: 2em;
+    margin: 0;
+    box-sizing: border-box
+}
+
+.neap-salary-to {
+    display: table-cell;
+    width: 20%;
+    text-align: center;
+    vertical-align: middle
+}
+
+.neap-salary-submit {
+    clear: both;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-bottom: 1.5em
+}
+
+.red-remove {
+    color: #F60;
+    float: right;
+}
+
+.red-remove a {
+    color: #F60;
+    display: inline-block;
+}
+
+.red-remove:hover,
+.red-remove:hover a {
+    color: #F60;
+}
+
+.search-query {
+    /* search result filter box */
+    margin: 0 0 0 0;
+}
+
+.search-query>h3 {
+    display: none;
+}
+
+.search-query input[type="text"],
+.search-query select {
+    margin: 0 !important;
+    color: #1a1a1a
+}
+
+.side-menu-cursor a,
+.side-menu-cursor li {
+    cursor: pointer;
+}
+
+#wrapper .search-query>p {
+    cursor: auto
+}
+
+.num-results {
+    margin: 0 0 1em 0;
+}
+
+.new-search-link {
+    display:none;
+}
+
+.searchresult-number {
+    color: #333;
+    font-weight: bold;
+}
+
+.fairplay-container {
+    padding-top: 3em;
+    padding-bottom: 2em;
+}
+
+#fairplay-pagination a { 
+    border: solid 1px #BEBEBE;
+    cursor: pointer;
+    display: inline-block;
+    font-size: small;
+    margin: 0 0.5em 0 0;
+    padding: 0.5em 0.5em;
+    text-align: center;
+}
+
+@media (max-width: 767px) {
+
+    body {
+        padding-top: 0;
+    }
+
+    .btn-primary {
+        font-size: 14px;
+    }
+
+    .job-breadcrumbs {
+        display: none;
+    }
+
+    .new-search-link {
+        display:block;
+        float: right;
+    }
+}
+
+@media screen and (max-width: 991px) {
+    .description-holder .locandsalary {
+        font-size: small;
+        overflow: hidden;
+        margin: 0 0 1em 0;
+        width: 90%;
+    }
+
+    .description-holder .locandsalary span {
+        margin: 0 10px 0 0;
+        float: left;
+    }
+
+    .description-holder .description-text {
+        width: 100%;
+    }
+
+    .description-holder .job-checkbox {
+        float: right;
+        text-align: right;
+    }
+
+    .job-toplink,
+    .job-breadcrumbs {
+        padding: 0;
+        width: 100%;
+    }
+
+    .job-toplink a {
+        display: block;
+        margin: 0 0 0.5em 0;
+    }
+
+    .job-rightlinks {
+        clear: both;
+        float: none;
+        text-align: left;
+        width: 100%;
+    }
+
+    .job-rightlinks br {
+        display: none;
+    }
+}
+
+
+/* 1. START: Global */
+
