@@ -1,6 +1,6 @@
 {
   "name": "fairplay-widgetjs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "JS Widget that powers job search",
   "main": "index.js",
   "repository": {
