@@ -21,7 +21,7 @@
     "build-prod": "WEBPACK_ENV=build webpack",
     "build-dev": "WEBPACK_ENV=dev webpack",
     "lint": "eslint index.js src/ test/ --fix",
-    "push": "git push --follow-tags origin master && npm publish",
+    "push": "git push --follow-tags origin master && npm publish --access=public",
     "rls": "standard-version --release-as",
     "test": "mocha",
     "v": "node -e \"console.log(require('./package.json').version)\""
