@@ -13,9 +13,9 @@
   "homepage": "https://gitlab.com/neap/fairplay-widgetjs#readme",
   "scripts": {
     "dev": "WEBPACK_ENV=build webpack & NODE_ENV=dev node index.js",
+    "build": "WEBPACK_ENV=dev webpack && WEBPACK_ENV=build webpack",
     "build-prod": "WEBPACK_ENV=build webpack",
     "build-dev": "WEBPACK_ENV=dev webpack",
-    "init:bucket": "node ./src/init/bucket.js",
     "lint": "eslint index.js src/ test/ --fix",
     "push": "git push --follow-tags origin master",
     "rls": "standard-version --release-as",
