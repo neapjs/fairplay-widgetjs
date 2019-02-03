@@ -1,5 +1,5 @@
 {
-  "name": "fairplay-widgetjs",
+  "name": "@neap/fairplay-widgetjs",
   "version": "0.0.7",
   "description": "JS Widget that powers job search",
   "main": "dist/fairplay.min.js",
