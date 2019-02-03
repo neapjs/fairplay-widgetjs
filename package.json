@@ -2,9 +2,10 @@
   "name": "fairplay-widgetjs",
   "version": "0.0.3",
   "description": "JS Widget that powers job search",
-  "main": "index.js",
+  "main": "lib/fairplay.min.js",
+  "unpkg": "lib/fairplay.min.js",
   "files": [
-    "lib/"
+    "lib"
   ],
   "repository": {
     "type": "git",
