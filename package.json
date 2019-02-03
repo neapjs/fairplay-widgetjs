@@ -3,6 +3,9 @@
   "version": "0.0.2",
   "description": "JS Widget that powers job search",
   "main": "index.js",
+  "files": [
+    "lib/"
+  ],
   "repository": {
     "type": "git",
     "url": "https://gitlab.com/neap/fairplay-widgetjs.git"
