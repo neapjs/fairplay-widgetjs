@@ -1,3 +1,4 @@
+
 /* 1. START: Global */
 body {
     font-family: 'Open Sans', Arial, sans-serif;
@@ -64,7 +65,7 @@ body {
     padding-top: 72px;
 }
 
-#wrapper {}
+#fp-wrapper {}
 
 #side-left {
     margin-top: 10px;
@@ -249,6 +250,23 @@ textarea.form-control {
     visibility: hidden !important
 }
 
+.container {
+    margin-right: auto;
+    margin-left: auto;
+    padding-left: 15px;
+    padding-right: 15px
+}
+
+.container:before,
+.container:after {
+    content: " ";
+    display: table
+}
+
+.container:after {
+    clear: both
+}
+
 @media (max-width:767px) {
 
     .hidden-xs {
@@ -270,6 +288,10 @@ textarea.form-control {
     .col-sm-8 {
         width: 66.66666667%
     }
+
+    .container {
+        width: 750px
+    }
 }
 
 @media (min-width:992px) {
@@ -285,6 +307,16 @@ textarea.form-control {
 
     .col-md-3 {
         width: 25%
+    }
+
+    .container {
+        width: 970px
+    }
+}
+
+@media (min-width:1200px) {
+    .container {
+        width: 1170px
     }
 }
 
@@ -714,7 +746,7 @@ input.mini-new-buttons {
     cursor: pointer;
 }
 
-#wrapper .search-query>p {
+#fp-wrapper .search-query>p {
     cursor: auto
 }
 
@@ -731,7 +763,7 @@ input.mini-new-buttons {
     font-weight: bold;
 }
 
-.fairplay-container {
+.fp-container {
     padding-top: 3em;
     padding-bottom: 2em;
 }
@@ -744,6 +776,10 @@ input.mini-new-buttons {
     margin: 0 0.5em 0 0;
     padding: 0.5em 0.5em;
     text-align: center;
+}
+
+#fairplay-pagination .active {
+    font-weight: 700;
 }
 
 @media (max-width: 767px) {

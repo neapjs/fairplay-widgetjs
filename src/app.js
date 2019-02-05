@@ -3,48 +3,12 @@ var JOB_AD_URL = '/jobs'
 var JOB_API_TEST = 'https://api-test-dot-fp-recruit-vquqd.appspot.com'
 var JOB_API_PROD = 'https://api-dot-fp-recruit-vquqd.appspot.com'
 var CLIENT_ID_TEST = '9s7vo-iiu99-b4w7s-5rxr4'
-var PAGE_SIZE = 3
+var DEFAULT_PAGE_SIZE = 10
 var ANNUALY_ID = 1
 var MONTHLY_ID = 2
 var DAILY_ID = 3
 var HOURLY_ID = 4
-var SAMPLE_CATEGORIES = {
-	5820: 'Accounting' ,
-	5821: 'Administration' ,
-	5823: 'Aged Care' ,
-	5830: 'Community' ,
-	5834: 'Disabilities' ,
-	5835: 'Education & Training' ,
-	5837: 'Executive' ,
-	5840: 'Health' ,
-	5849: 'Health' ,
-	5842: 'HR & Recruitment' ,
-	5843: 'IT' ,
-	5845: 'Legal' ,
-	5848: 'Marketing' ,
-	5858: 'Marketing' ,
-	5862: 'Marketing' ,
-	5855: 'Records, Information and Archives' ,
-	5871: 'Social Care' ,
-	6633: 'Adelaide' ,
-	6630: 'Brisbane' ,
-	6636: 'Canberra' ,
-	6635: 'Darwin' ,
-	6631: 'Gold Coast' ,
-	6634: 'Hobart' ,
-	6629: 'Melbourne' ,
-	6632: 'Perth' ,
-	6637: 'Regional NSW' ,
-	6638: 'Regional VIC' ,
-	6639: 'Regional QLD' ,
-	6640: 'Regional WA' ,
-	6641: 'Regional SA' ,
-	6642: 'Regional TAS' ,
-	6643: 'Regional ACT' ,
-	6644: 'Regional NT' ,
-	6628: 'Sydney' ,
-	6645: 'Other'
-}
+var SAMPLE_CATEGORIES
 
 var _eventBus = new Vue({})
 
@@ -197,7 +161,8 @@ function _escapeJobCategoriesName(name){
 	return encodeURIComponent((name || '').toLowerCase().trim().replace(/^\s+|\s+$/g, '').replace(/&/g, 'and').replace(/[^a-zA-Z0-9]/g, '-').replace(/(-)\1+/, '-'))
 }
 
-function _fetchJobAds({ jobApi, clientId, categories, mode }) {
+function _fetchJobAds({ clientId, categories, mode }) {
+	let jobApi
 	if (mode == 'dev') {
 		jobApi = JOB_API_TEST
 		clientId = CLIENT_ID_TEST
@@ -417,7 +382,7 @@ function _updateQueryString(queryString) {
 Vue.component('neap-widget', {
 	props: ['jobads'],
 	template: `
-	<div class="fairplay-container">
+	<div id="fp-wrapper" class="fp-container container">
 		<div id="side-left" class="col-sm-4 col-md-3" :class="sideMenuClass">
 			<left-menu-status></left-menu-status>
 			<left-menu></left-menu>
@@ -882,21 +847,22 @@ Vue.component('page-buttons', {
 		pageChange(pos) {
 			var newPos = pos < 1 ? 1 : pos > this.page.max ? this.page.max : pos
 
-			this.page.current = pos
+			this.page.current = newPos
 			var vm = this
 			Object.keys(this.page).forEach(function(key){
 				if (vm.page[key] == 'active') 
 					Vue.set(vm.page, key, '')
 			})
-			Vue.set(this.page, pos, 'active')
+			Vue.set(this.page, newPos, 'active')
 
 			_eventBus.$emit('pageChange', newPos)
 		},
-		update(jobAds, page) {
+		update(jobAds, page, options) {
 			var vm = this
+			var pageSize = (options || {}).pageSize || DEFAULT_PAGE_SIZE
 			page = page || 1
 			jobAds = jobAds || []
-			var pageNumbers = Math.ceil(jobAds.length/PAGE_SIZE)
+			var pageNumbers = Math.ceil(jobAds.length/pageSize)
 			if (jobAds.length == 0 || pageNumbers == 1) 
 				this.page.style = 'display:none;'
 			else {
@@ -943,152 +909,158 @@ Vue.component('job-search-header', {
 	}
 })
 
-var fairplay = {
-	start: function(options) {
-		options = options || {}
-		options.categories = SAMPLE_CATEGORIES
-		new Vue({
-			el: '#container',
-			data: {
-				allJobAds:[],
-				allFilteredJobAds:[],
-				jobads:[]
-			},
-			created(){
-				var vm = this
+var fairplay = function(options) {
+	options = options || {}
+	options.categories = options.categories || {}
+	options.pageSize = options.pageSize || DEFAULT_PAGE_SIZE
+	var pageSize = options.pageSize
+	var el = options.el 
+	if (!el)
+		throw new Error(`Missing required argument 'el'. Please set up the 'fairplay' widget with a valid CSS selector (example: fairplay({ el: '#container', clientId:'your-client-id' }))`)
 
-				var filterJobAds = function() {
-					var queryFilter = _getQueryStringFilters() || {}
-					var filters = queryFilter.filters || []
-					var page = queryFilter.page 
+	document.querySelector(el).innerHTML = document.querySelector(el).innerHTML + '<neap-widget v-bind:jobads="jobads"></neap-widget>'
+	
+	new Vue({
+		el: el,
+		data: {
+			allJobAds:[],
+			allFilteredJobAds:[],
+			jobads:[]
+		},
+		created(){
+			var vm = this
 
-					var filteredJobAds = vm.allJobAds.map(_idFn)
-					filters.forEach(function(filter) {
-						var filterIds = (filter.id || []).reduce(function(acc,id){
-							acc[id] = true
-							return acc 
-						}, {})
-						if (filter.type == 'professions') 
-							filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.profession && filterIds[jobAd.profession.id] })
-						else if (filter.type == 'roles')
-							filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.profession && jobAd.profession.role && filterIds[jobAd.profession.role.id] })
-						else if (filter.type == 'locations')
-							filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.location && filterIds[jobAd.location.id] })
-						else if (filter.type == 'areas')
-							filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.location && jobAd.location.area && filterIds[jobAd.location.area.id] })
-						else if (filter.type == 'workTypes')
-							filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.workType && filterIds[jobAd.workType.id] })
-						else if (filter.type == 'salary') {				
-							filteredJobAds = filteredJobAds.filter(function(jobAd) { 
-								return jobAd.salary 
-									&& jobAd.salary.id == filter.salaryTypeId 
-									&& ((jobAd.salary.lower <= filter.lower && filter.lower <= jobAd.salary.upper) 
-										|| (jobAd.salary.lower <= filter.upper && filter.upper <= jobAd.salary.upper)
-										|| (filter.lower <= jobAd.salary.lower && jobAd.salary.lower <= filter.upper)
-										|| (filter.lower <= jobAd.salary.upper && jobAd.salary.upper <= filter.upper))
-							})
-						}
-						else if (filter.type == 'keywords' && filter.name) {
-							var k = filter.name.toLowerCase().trim()
-							filteredJobAds = filteredJobAds.filter(function(jobAd) { 
-								return jobAd.title && jobAd.title.toLowerCase().indexOf(k) >= 0 
-									|| jobAd.profession && jobAd.profession.name && jobAd.profession.name.toLowerCase().indexOf(k) >= 0
-									|| jobAd.profession && jobAd.profession.role && jobAd.profession.role.name && jobAd.profession.role.name.toLowerCase().indexOf(k) >= 0
-									|| jobAd.location && jobAd.location.name && jobAd.location.name.toLowerCase().indexOf(k) >= 0
-									|| jobAd.location && jobAd.location.area && jobAd.location.area.name && jobAd.location.area.name.toLowerCase().indexOf(k) >= 0
-									|| jobAd.workType && jobAd.workType.name && jobAd.workType.name.toLowerCase().indexOf(k) >= 0
-									|| jobAd.summary && jobAd.summary.toLowerCase().indexOf(k) >= 0
-							})
-						}
-					})
+			var filterJobAds = function() {
+				var queryFilter = _getQueryStringFilters() || {}
+				var filters = queryFilter.filters || []
+				var page = queryFilter.page 
 
-					vm.allFilteredJobAds = filteredJobAds
-					vm.jobads = filteredJobAds.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE)
-
-					_eventBus.$emit('job-search-header.update', filteredJobAds, page)
-					_eventBus.$emit('page-buttons.update', filteredJobAds, page)
-					_eventBus.$emit('left-menu.update', filteredJobAds, options)
-					_eventBus.$emit('neap-widget.hide-menu')
-				}
-
-				_eventBus.$on('pageChange', function(pos) {
-					// 1. Update query string
-					_updateQueryString({ page: pos })
-					
-					// 2. Update all components accordingly
-					var start = pos-1 >= 0 ? pos-1 : 0
-					var next = start + 1
-					vm.jobads = vm.allFilteredJobAds.slice(start*PAGE_SIZE, next*PAGE_SIZE)
-				})
-
-				_eventBus.$on('filterBy', function(filters, page, origin) {
-					// 1. Update query string
-					if (origin != 'querystring') {
-						var q = {}	
-						filters = filters || []
-						filters.forEach(function(filter) {
-							if (filter.type == 'salary') {
-								var labels = {}
-								labels[ANNUALY_ID] = 'annualy'
-								labels[MONTHLY_ID] = 'monthly'
-								labels[DAILY_ID] = 'daily'
-								labels[HOURLY_ID] = 'hourly'
-								Object.keys(labels).forEach(function(key){
-									if (key == filter.salaryTypeId)
-										q[labels[key]] = filter.lower + '-' + filter.upper
-									else
-										q[labels[key]] = null
-								})
-							} 
-							else if (filter.type == 'keywords')
-								q[filter.type] = encodeURIComponent(filter.name)
-							else
-								q[filter.type] = encodeURIComponent(filter.name) + '-' + filter.strId	
-						})
-						q.page = 1
-						_updateQueryString(q)
-					}
-
-					// 2. Update all components accordingly
-					filterJobAds()
-					_eventBus.$emit('left-menu-status.add-filters', filters)
-					if (page || origin) // that means that this event does not come from the 'left-menu' itself
-						_eventBus.$emit('left-menu.toggle-filters', filters)
-				})
-
-				_eventBus.$on('removeFilter', function(filter) {
-					// 1. Update query string. If the filter is a parent filter ('professions' or 'locations'), then also remove their resp. child
-					var q = {}
-					if (filter.type == 'professions')
-						q = { professions: null, roles: null }
+				var filteredJobAds = vm.allJobAds.map(_idFn)
+				filters.forEach(function(filter) {
+					var filterIds = (filter.id || []).reduce(function(acc,id){
+						acc[id] = true
+						return acc 
+					}, {})
+					if (filter.type == 'professions') 
+						filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.profession && filterIds[jobAd.profession.id] })
+					else if (filter.type == 'roles')
+						filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.profession && jobAd.profession.role && filterIds[jobAd.profession.role.id] })
 					else if (filter.type == 'locations')
-						q = { locations: null, areas: null }
-					else if (filter.type == 'salary')
-						q = { annualy: null, hourly: null, monthly: null, daily: null }
-					else 
-						q[filter.type] = null
+						filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.location && filterIds[jobAd.location.id] })
+					else if (filter.type == 'areas')
+						filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.location && jobAd.location.area && filterIds[jobAd.location.area.id] })
+					else if (filter.type == 'workTypes')
+						filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.workType && filterIds[jobAd.workType.id] })
+					else if (filter.type == 'salary') {				
+						filteredJobAds = filteredJobAds.filter(function(jobAd) { 
+							return jobAd.salary 
+								&& jobAd.salary.id == filter.salaryTypeId 
+								&& ((jobAd.salary.lower <= filter.lower && filter.lower <= jobAd.salary.upper) 
+									|| (jobAd.salary.lower <= filter.upper && filter.upper <= jobAd.salary.upper)
+									|| (filter.lower <= jobAd.salary.lower && jobAd.salary.lower <= filter.upper)
+									|| (filter.lower <= jobAd.salary.upper && jobAd.salary.upper <= filter.upper))
+						})
+					}
+					else if (filter.type == 'keywords' && filter.name) {
+						var k = filter.name.toLowerCase().trim()
+						filteredJobAds = filteredJobAds.filter(function(jobAd) { 
+							return jobAd.title && jobAd.title.toLowerCase().indexOf(k) >= 0 
+								|| jobAd.profession && jobAd.profession.name && jobAd.profession.name.toLowerCase().indexOf(k) >= 0
+								|| jobAd.profession && jobAd.profession.role && jobAd.profession.role.name && jobAd.profession.role.name.toLowerCase().indexOf(k) >= 0
+								|| jobAd.location && jobAd.location.name && jobAd.location.name.toLowerCase().indexOf(k) >= 0
+								|| jobAd.location && jobAd.location.area && jobAd.location.area.name && jobAd.location.area.name.toLowerCase().indexOf(k) >= 0
+								|| jobAd.workType && jobAd.workType.name && jobAd.workType.name.toLowerCase().indexOf(k) >= 0
+								|| jobAd.summary && jobAd.summary.toLowerCase().indexOf(k) >= 0
+						})
+					}
+				})
+
+				vm.allFilteredJobAds = filteredJobAds
+				vm.jobads = filteredJobAds.slice((page-1)*pageSize, page*pageSize)
+
+				_eventBus.$emit('job-search-header.update', filteredJobAds, page)
+				_eventBus.$emit('page-buttons.update', filteredJobAds, page, options)
+				_eventBus.$emit('left-menu.update', filteredJobAds, options)
+				_eventBus.$emit('neap-widget.hide-menu')
+			}
+
+			_eventBus.$on('pageChange', function(pos) {
+				// 1. Update query string
+				_updateQueryString({ page: pos })
+				
+				// 2. Update all components accordingly
+				var start = pos-1 >= 0 ? pos-1 : 0
+				var next = start + 1
+				vm.jobads = vm.allFilteredJobAds.slice(start*pageSize, next*pageSize)
+			})
+
+			_eventBus.$on('filterBy', function(filters, page, origin) {
+				// 1. Update query string
+				if (origin != 'querystring') {
+					var q = {}	
+					filters = filters || []
+					filters.forEach(function(filter) {
+						if (filter.type == 'salary') {
+							var labels = {}
+							labels[ANNUALY_ID] = 'annualy'
+							labels[MONTHLY_ID] = 'monthly'
+							labels[DAILY_ID] = 'daily'
+							labels[HOURLY_ID] = 'hourly'
+							Object.keys(labels).forEach(function(key){
+								if (key == filter.salaryTypeId)
+									q[labels[key]] = filter.lower + '-' + filter.upper
+								else
+									q[labels[key]] = null
+							})
+						} 
+						else if (filter.type == 'keywords')
+							q[filter.type] = encodeURIComponent(filter.name)
+						else
+							q[filter.type] = encodeURIComponent(filter.name) + '-' + filter.strId	
+					})
 					q.page = 1
 					_updateQueryString(q)
+				}
 
-					// 2. Update all components accordingly
-					filterJobAds()
-					_eventBus.$emit('page-buttons.page-change', 1)
-					_eventBus.$emit('left-menu.untoggle-filter', filter)
-				})
+				// 2. Update all components accordingly
+				filterJobAds()
+				_eventBus.$emit('left-menu-status.add-filters', filters)
+				if (page || origin) // that means that this event does not come from the 'left-menu' itself
+					_eventBus.$emit('left-menu.toggle-filters', filters)
+			})
 
-				_eventBus.$on('showSearch', function() {
-					_eventBus.$emit('neap-widget.show-menu')
-				})
+			_eventBus.$on('removeFilter', function(filter) {
+				// 1. Update query string. If the filter is a parent filter ('professions' or 'locations'), then also remove their resp. child
+				var q = {}
+				if (filter.type == 'professions')
+					q = { professions: null, roles: null }
+				else if (filter.type == 'locations')
+					q = { locations: null, areas: null }
+				else if (filter.type == 'salary')
+					q = { annualy: null, hourly: null, monthly: null, daily: null }
+				else 
+					q[filter.type] = null
+				q.page = 1
+				_updateQueryString(q)
 
-				_getJobAds(options).then(function(jobs) {
-					vm.allJobAds = jobs
-					vm.allFilteredJobAds = jobs
-					var queryFilter = _getQueryStringFilters() || {}
-					_eventBus.$emit('filterBy', queryFilter.filters, queryFilter.page, 'querystring')
-				})
-			}
-		})
-	}
+				// 2. Update all components accordingly
+				filterJobAds()
+				_eventBus.$emit('page-buttons.page-change', 1)
+				_eventBus.$emit('left-menu.untoggle-filter', filter)
+			})
+
+			_eventBus.$on('showSearch', function() {
+				_eventBus.$emit('neap-widget.show-menu')
+			})
+
+			_getJobAds(options).then(function(jobs) {
+				vm.allJobAds = jobs
+				vm.allFilteredJobAds = jobs
+				var queryFilter = _getQueryStringFilters() || {}
+				_eventBus.$emit('filterBy', queryFilter.filters, queryFilter.page, 'querystring')
+			})
+		}
+	})
 }
 
 module.exports.fairplay = fairplay
