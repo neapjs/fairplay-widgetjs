@@ -8,7 +8,6 @@ var ANNUALY_ID = 1
 var MONTHLY_ID = 2
 var DAILY_ID = 3
 var HOURLY_ID = 4
-var SAMPLE_CATEGORIES
 
 var _eventBus = new Vue({})
 
@@ -382,14 +381,14 @@ function _updateQueryString(queryString) {
 Vue.component('neap-widget', {
 	props: ['jobads'],
 	template: `
-	<div id="fp-wrapper" class="fp-container container">
-		<div id="side-left" class="col-sm-4 col-md-3" :class="sideMenuClass">
+	<div id="fp-wrapper" class="fp-box fp-container">
+		<div id="fp-side-left" class="fp-col-sm-4 fp-col-md-3" :class="sideMenuClass">
 			<left-menu-status></left-menu-status>
 			<left-menu></left-menu>
 		</div>
 		
-		<div id="content" class="col-sm-8 col-md-9 col-xs-12" :class="contentClass">
-			<div class="content-holder">
+		<div id="fp-content" class="fp-col-sm-8 fp-col-md-9 fp-col-xs-12" :class="contentClass">
+			<div class="fp-content-holder">
 				<job-search-header></job-search-header>
 				<jobads v-bind:jobads="jobads"></jobads>
 				<page-buttons></page-buttons>
@@ -399,17 +398,17 @@ Vue.component('neap-widget', {
 	`,
 	data(){
 		return {
-			sideMenuClass:'hidden-xs', // by default the side menu is not visible in mobile
+			sideMenuClass:'fp-hidden-xs', // by default the side menu is not visible in mobile
 			contentClass:'' // by default the content is visible
 		}
 	},
 	methods: {
 		showMenu() {
-			this.contentClass = 'hidden-xs'
+			this.contentClass = 'fp-hidden-xs'
 			this.sideMenuClass = ''
 		},
 		hideMenu() {
-			this.sideMenuClass = 'hidden-xs'
+			this.sideMenuClass = 'fp-hidden-xs'
 			this.contentClass = ''
 		}
 	},
@@ -421,7 +420,7 @@ Vue.component('neap-widget', {
 
 Vue.component('left-menu', {
 	template: `
-	<ul id="side-drop-menu" class="side-menu-cursor">
+	<ul id="fp-side-drop-menu" class="fp-side-menu-cursor">
 		<li :class="menu.professions.hidden">
 			<a @click="expandMenu('professions')">Classification</a>
 			<ul :class="menu.professions.expand">
@@ -465,7 +464,7 @@ Vue.component('left-menu', {
 		<li v-if="menu.salaryTypes && menu.salaryTypes.length > 0">
 			<a href="#">Salary</a>
 			<div class="neap-salary-type">
-				<select name="salary-type" v-model="menu.salary.id" class="form-control">
+				<select name="salary-type" v-model="menu.salary.id" class="fp-form-control">
 					<option v-for="(item,idx) in menu.salaryTypes" :value="item.id" :selected="idx == 0">{{ item.name }}</option>
 				</select>
 			</div>
@@ -474,7 +473,7 @@ Vue.component('left-menu', {
 					<label for="txtSalaryLowerBand">Minimum Salary</label>
 					<div class="neap-salary-input">
 						<span class="neap-salary-currency"></span>
-						<input name="salary-lower-band" type="text" v-model="menu.salary.lower" class="form-control" placeholder="Min." @keypress="isNumber">
+						<input name="salary-lower-band" type="text" v-model="menu.salary.lower" class="fp-form-control" placeholder="Min." @keypress="isNumber">
 					</div>
 				</div>
 				<div class="neap-salary-to">to</div>
@@ -482,7 +481,7 @@ Vue.component('left-menu', {
 					<label for="txtSalaryUpperBand">Maximum Salary</label>
 					<div class="neap-salary-input">
 						<span class="neap-salary-currency"></span>
-						<input name="salary-upper-band" type="text" v-model="menu.salary.upper" class="form-control" placeholder="Max." @keypress="isNumber">
+						<input name="salary-upper-band" type="text" v-model="menu.salary.upper" class="fp-form-control" placeholder="Max." @keypress="isNumber">
 					</div>
 				</div>
 			</div>
@@ -490,7 +489,7 @@ Vue.component('left-menu', {
 			<div class="neap-salary-bands-error" v-if="showSalaryError">Please enter at least one min. or max. salary greater than zero</div>
 
 			<div class="neap-salary-submit">
-				<input type="submit" name="salary-submit-button" value="Submit" @click="filterBySalary" class="mini-new-buttons btn btn-primary">
+				<input type="submit" name="salary-submit-button" value="Submit" @click="filterBySalary" class="fp-mini-new-buttons fp-btn fp-btn-primary">
 			</div>
 		</li>
 	</ul>`,
@@ -501,31 +500,31 @@ Vue.component('left-menu', {
 			menu: {
 				professions: {
 					hidden: '',
-					expand: 'expand-menu',
+					expand: 'fp-expand-menu',
 					items: [],
 					selectedIds: null
 				},
 				roles: {
-					hidden: 'hidden',
-					expand: 'collapse-menu',
+					hidden: 'fp-hidden',
+					expand: 'fp-collapse-menu',
 					items: [],
 					selectedIds: null
 				},
 				locations: {
 					hidden: '',
-					expand: 'collapse-menu',
+					expand: 'fp-collapse-menu',
 					items: [],
 					selectedIds: null
 				},
 				areas: {
-					hidden: 'hidden',
-					expand: 'collapse-menu',
+					hidden: 'fp-hidden',
+					expand: 'fp-collapse-menu',
 					items: [],
 					selectedIds: null
 				},
 				workTypes: {
 					hidden: '',
-					expand: 'collapse-menu',
+					expand: 'fp-collapse-menu',
 					items: [],
 					selectedIds: null
 				},
@@ -596,25 +595,25 @@ Vue.component('left-menu', {
 				var type = filter.type
 
 				if (type == 'professions') {
-					vm.menu.professions.hidden = 'hidden'
+					vm.menu.professions.hidden = 'fp-hidden'
 					vm.menu.professions.selectedIds = ids
 					
 					if (!filters.some(function(f){ return f.type == 'roles' }))
 						vm.expandMenu('roles')
 				} else if (type == 'locations') {
-					vm.menu.locations.hidden = 'hidden'
+					vm.menu.locations.hidden = 'fp-hidden'
 					vm.menu.locations.selectedIds = ids
 					
 					if (!filters.some(function(f){ return f.type == 'areas' }))
 						vm.expandMenu('areas')
 				} else if (type == 'workTypes') {
-					vm.menu.workTypes.hidden = 'hidden'
+					vm.menu.workTypes.hidden = 'fp-hidden'
 					vm.menu.workTypes.selectedIds = ids
 				} else if (type == 'areas') {
-					vm.menu.areas.hidden = 'hidden'
+					vm.menu.areas.hidden = 'fp-hidden'
 					vm.menu.areas.selectedIds = ids
 				} else if (type == 'roles') {
-					vm.menu.roles.hidden = 'hidden'
+					vm.menu.roles.hidden = 'fp-hidden'
 					vm.menu.roles.selectedIds = ids
 				}
 			})
@@ -630,11 +629,11 @@ Vue.component('left-menu', {
 				if (type == 'professions') {
 					this.menu.professions.hidden = ''
 					this.menu.professions.selectedIds = null
-					this.menu.roles.hidden = 'hidden'
+					this.menu.roles.hidden = 'fp-hidden'
 				} else if (type == 'locations') {
 					this.menu.locations.hidden = ''
 					this.menu.locations.selectedIds = null
-					this.menu.areas.hidden = 'hidden'
+					this.menu.areas.hidden = 'fp-hidden'
 				} else if (type == 'workTypes') {
 					this.menu.workTypes.hidden = ''
 					this.menu.workTypes.selectedIds = null
@@ -699,15 +698,15 @@ Vue.component('left-menu', {
 			var vm = this
 			this.menu[menuName].hidden = ''
 			// This menu is not expanded, so expand it
-			if (this.menu[menuName].expand == 'collapse-menu') {
+			if (this.menu[menuName].expand == 'fp-collapse-menu') {
 				var allMenus = ['professions', 'roles', 'locations', 'areas', 'workTypes']
 				var hideMenus = allMenus.filter(function(name) { return name != menuName })
 				hideMenus.forEach(function(name) {
-					vm.menu[name].expand = 'collapse-menu'
+					vm.menu[name].expand = 'fp-collapse-menu'
 				})
-				this.menu[menuName].expand = 'expand-menu'
+				this.menu[menuName].expand = 'fp-expand-menu'
 			} else // This menu is already expanded, so collapse it
-				this.menu[menuName].expand = 'collapse-menu'
+				this.menu[menuName].expand = 'fp-collapse-menu'
 		}
 	},
 	created() {
@@ -721,32 +720,32 @@ Vue.component('jobads', {
 	props: ['jobads'],
 	template: `
 	<div>
-		<div v-for="jobad in jobads" v-bind:key="jobad.id" class="job-holder">
-			<div class="job-toplink">
+		<div v-for="jobad in jobads" v-bind:key="jobad.id" class="fp-job-holder">
+			<div class="fp-job-toplink">
 				<a :href="jobad.link">{{ jobad.title }}</a>
-				<div class="nameofcompany">abrs</div>
+				<div class="fp-nameofcompany">{{ jobad.company }}</div>
 			</div>
-			<div class="job-rightlinks">
+			<div class="fp-job-rightlinks">
 				<span class="dateText">{{ jobad.date }}</span>
 			</div>
-			<div class="description-holder">
+			<div class="fp-description-holder">
 				<div class="locandsalary">
 					<span>{{ jobad.location.name }}</span>
 					<span class="neap-result-area">{{ jobad.location.area.name }}</span>
 					<span class="neap-result-salary">{{ jobad.salary.description }}</span>
 					<span>{{ jobad.workType.name }}</span>
 				</div>
-				<div class="description-text">
+				<div class="fp-description-text">
 					<ul>
 						<li v-for="item in jobad.bulletPoints">{{ item }}</li>
 					</ul>
 				</div>
 			</div>
-			<div class="description-holder">
-				<div class="short-description-text">{{ jobad.summary }}</div>
+			<div class="fp-description-holder">
+				<div class="short-fp-description-text">{{ jobad.summary }}</div>
 			</div>
 			<br/>
-			<div class="job-breadcrumbs">
+			<div class="fp-job-breadcrumbs">
 				<a v-bind:href="jobad.profession.link">{{ jobad.profession.name }}</a> &gt; <a v-bind:href="jobad.profession.role.link">{{ jobad.profession.role.name }}</a>
 			</div>
 		</div>
@@ -755,11 +754,11 @@ Vue.component('jobads', {
 
 Vue.component('left-menu-status', {
 	template: `
-	<div id='side-left-status'>
-		<div v-for="filter in filters" v-bind:key="filter.id" class="search-query side-menu-cursor">
+	<div>
+		<div v-for="filter in filters" v-bind:key="filter.id" class="fp-search-query fp-side-menu-cursor">
 			<p>
 				<span>{{ filter.name }}</span>
-				<span class="red-remove">(<a @click="removeFilter(filter)">Remove</a>)</span>
+				<span class="fp-red-remove">(<a @click="removeFilter(filter)">Remove</a>)</span>
 			</p>
 		</div>
 	</div>`,
@@ -825,11 +824,11 @@ Vue.component('page-buttons', {
 	template: `
 	<div id="fairplay-pagination" v-bind:style="page.style">
 		<a @click="pageChange(1)">&lt;&lt;</a>
-		<a @click="pageChange(page.current-1)" class="disabled_tnt_pagination search-previous-button">Prev</a>
+		<a @click="pageChange(page.current-1)">Prev</a>
 		<a v-for="number in page.numbers" @click="pageChange(number)" :class="page[number]" >
 			{{ number }}
 		</a>
-		<a @click="pageChange(page.current+1)" class="search-next-button">Next</a>
+		<a @click="pageChange(page.current+1)">Next</a>
 		<a @click="pageChange(page.numbers.length)">&gt;&gt;</a>
 	</div>`,
 	data() {
@@ -850,10 +849,10 @@ Vue.component('page-buttons', {
 			this.page.current = newPos
 			var vm = this
 			Object.keys(this.page).forEach(function(key){
-				if (vm.page[key] == 'active') 
+				if (vm.page[key] == 'fp-active') 
 					Vue.set(vm.page, key, '')
 			})
-			Vue.set(this.page, newPos, 'active')
+			Vue.set(this.page, newPos, 'fp-active')
 
 			_eventBus.$emit('pageChange', newPos)
 		},
@@ -872,10 +871,10 @@ Vue.component('page-buttons', {
 			}
 
 			Object.keys(this.page).forEach(function(key){
-				if (vm.page[key] == 'active') 
+				if (vm.page[key] == 'fp-active') 
 					Vue.set(vm.page, key, '')
 			})
-			Vue.set(this.page, page, 'active')
+			Vue.set(this.page, page, 'fp-active')
 		}
 	},
 	created() {
@@ -886,10 +885,10 @@ Vue.component('page-buttons', {
 
 Vue.component('job-search-header', {
 	template: `
-	<div class="num-results" v-if="jobads">
-		Your search resulted in: <span class="searchresult-number">{{ jobads.length }}</span> position{{ jobads.length > 1 ? 's' : '' }}<span class="new-search-link side-menu-cursor"><a @click="showSearch" class="boardy-back-to-search">New Search</a></span>
+	<div class="fp-num-results" v-if="jobads">
+		Your search resulted in: <span class="fp-searchresult-number">{{ jobads.length }}</span> position{{ jobads.length > 1 ? 's' : '' }}<span class="fp-new-search-link fp-side-menu-cursor"><a @click="showSearch">New Search</a></span>
 	</div>
-	<div class="num-results" v-else>
+	<div class="fp-num-results" v-else>
 		Searching jobs...
 	</div>`,
 	data() {
@@ -916,7 +915,7 @@ var fairplay = function(options) {
 	var pageSize = options.pageSize
 	var el = options.el 
 	if (!el)
-		throw new Error(`Missing required argument 'el'. Please set up the 'fairplay' widget with a valid CSS selector (example: fairplay({ el: '#container', clientId:'your-client-id' }))`)
+		throw new Error('Missing required argument \'el\'. Please set up the \'fairplay\' widget with a valid CSS selector (example: fairplay({ el: \'#container\', clientId:\'your-client-id\' }))')
 
 	document.querySelector(el).innerHTML = document.querySelector(el).innerHTML + '<neap-widget v-bind:jobads="jobads"></neap-widget>'
 	

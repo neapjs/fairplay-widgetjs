@@ -2,6 +2,7 @@ const path = require('path')
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 const webpack = require('webpack')
 
+
 const env = process.env.WEBPACK_ENV
 const outputfilename = "fairplay"
 const copyright = ''
@@ -15,8 +16,19 @@ const copyright = ''
 // `
 
 const { plugins, outputfile } = env == "build" 
-    ? { plugins: [new UglifyJSPlugin(), new webpack.BannerPlugin(copyright)], outputfile: `${outputfilename}.min.js` } 
-    : { plugins: [new webpack.BannerPlugin(copyright)], outputfile: `${outputfilename}.js` } 
+    ? { 
+        plugins: [
+            new UglifyJSPlugin(), 
+            new webpack.BannerPlugin(copyright)
+        ], 
+        outputfile: `${outputfilename}.min.js` 
+    } 
+    : { 
+        plugins: [
+            new webpack.BannerPlugin(copyright)
+        ], 
+        outputfile: `${outputfilename}.js` 
+    } 
 
 module.exports = {
     entry: [

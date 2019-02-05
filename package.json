@@ -17,7 +17,7 @@
   "homepage": "https://gitlab.com/neap/fairplay-widgetjs#readme",
   "scripts": {
     "dev": "WEBPACK_ENV=build webpack & NODE_ENV=dev node index.js",
-    "build": "WEBPACK_ENV=dev webpack && WEBPACK_ENV=build webpack",
+    "build": "WEBPACK_ENV=dev webpack && WEBPACK_ENV=build webpack && node src/scripts/minifyCss.js",
     "build-prod": "WEBPACK_ENV=build webpack",
     "build-dev": "WEBPACK_ENV=dev webpack",
     "lint": "eslint index.js src/ test/ --fix",
@@ -38,6 +38,7 @@
     "mocha": "^5.2.0",
     "node-fetch": "^2.3.0",
     "standard-version": "^4.4.0",
+    "uglifycss": "0.0.29",
     "uglifyjs-webpack-plugin": "^0.4.3",
     "webpack": "^2.6.1"
   },
