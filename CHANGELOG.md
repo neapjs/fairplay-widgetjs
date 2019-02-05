@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.0.10"></a>
+## [0.0.10](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.0.9...v0.0.10) (2019-02-05)
+
+
+### Bug Fixes
+
+* Paging + style issue ([b04fc41](https://gitlab.com/neap/fairplay-widgetjs/commit/b04fc41))
+* Various bugs + minify CSS ([a4c0197](https://gitlab.com/neap/fairplay-widgetjs/commit/a4c0197))
+
+
+
 <a name="0.0.9"></a>
 ## [0.0.9](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.0.8...v0.0.9) (2019-02-03)
 
