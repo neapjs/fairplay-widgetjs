@@ -9,6 +9,12 @@
 
 [https://unpkg.com/@neap/fairplay-widgetjs](https://unpkg.com/@neap/fairplay-widgetjs)
 
+You can access that JS and the default CSS using a specific version as follow:
+* [https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.js](https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.js)
+* [https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.min.js](https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.min.js)
+* [https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.css](https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.css)
+* [https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.min.css](https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.min.css)
+
 # How To
 ## How To Use Me
 
@@ -45,6 +51,12 @@ This will produce multiple artefacts under the __dist__ folder.
 6: Publish: `npm run push`
 
 This will host the minified and unminified versions to [https://unpkg.com/@neap/fairplay-widgetjs](https://unpkg.com/@neap/fairplay-widgetjs).
+
+You can access that JS and the default CSS using a specific version as follow:
+* [https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.js](https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.js)
+* [https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.min.js](https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.min.js)
+* [https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.css](https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.css)
+* [https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.min.css](https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.min.css)
 
 # Annexes
 ## JobAdder - Neap Board Categories
