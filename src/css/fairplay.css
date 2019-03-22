@@ -349,6 +349,7 @@ textarea.fp-form-control {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
+    cursor: pointer !important;
 }
 
 #fp-side-drop-menu ul li a {

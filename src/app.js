@@ -756,7 +756,7 @@ Vue.component('left-menu-status', {
 	template: `
 	<div>
 		<div v-for="filter in filters" v-bind:key="filter.id" class="fp-search-query fp-side-menu-cursor">
-			<p>
+			<p @click="removeFilter(filter)">
 				<span>{{ filter.name }}</span>
 				<span class="fp-red-remove"><a @click="removeFilter(filter)">+</a></span>
 			</p>
