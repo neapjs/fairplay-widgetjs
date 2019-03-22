@@ -17,7 +17,7 @@
   "homepage": "https://gitlab.com/neap/fairplay-widgetjs#readme",
   "scripts": {
     "dev": "WEBPACK_ENV=build webpack & NODE_ENV=dev node index.js",
-    "build": "WEBPACK_ENV=dev webpack && WEBPACK_ENV=build webpack && node src/scripts/minifyCss.js",
+    "build": "WEBPACK_ENV=build webpack && node src/scripts/minifyCss.js",
     "build-prod": "WEBPACK_ENV=build webpack",
     "build-dev": "WEBPACK_ENV=dev webpack",
     "lint": "eslint index.js src/ test/ --fix",
