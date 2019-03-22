@@ -489,7 +489,7 @@ Vue.component('left-menu', {
 			<div class="neap-salary-bands-error" v-if="showSalaryError">Please enter at least one min. or max. salary greater than zero</div>
 
 			<div class="neap-salary-submit">
-				<input type="submit" name="salary-submit-button" value="Submit" @click="filterBySalary" class="fp-mini-new-buttons fp-btn fp-btn-primary">
+				<input type="submit" name="salary-submit-button" value="Search" @click="filterBySalary" class="fp-mini-new-buttons fp-btn fp-btn-primary">
 			</div>
 		</li>
 	</ul>`,
@@ -758,7 +758,7 @@ Vue.component('left-menu-status', {
 		<div v-for="filter in filters" v-bind:key="filter.id" class="fp-search-query fp-side-menu-cursor">
 			<p>
 				<span>{{ filter.name }}</span>
-				<span class="fp-red-remove">(<a @click="removeFilter(filter)">Remove</a>)</span>
+				<span class="fp-red-remove"><a @click="removeFilter(filter)">+</a></span>
 			</p>
 		</div>
 	</div>`,
@@ -886,7 +886,7 @@ Vue.component('page-buttons', {
 Vue.component('job-search-header', {
 	template: `
 	<div class="fp-num-results" v-if="jobads">
-		Your search resulted in: <span class="fp-searchresult-number">{{ jobads.length }}</span> position{{ jobads.length > 1 ? 's' : '' }}<span class="fp-new-search-link fp-side-menu-cursor"><a @click="showSearch">New Search</a></span>
+		Search results: <span class="fp-searchresult-number">{{ jobads.length }}</span> position{{ jobads.length > 1 ? 's' : '' }}<span class="fp-new-search-link fp-side-menu-cursor"><a @click="showSearch">New Search</a></span>
 	</div>
 	<div class="fp-num-results" v-else>
 		Searching jobs...

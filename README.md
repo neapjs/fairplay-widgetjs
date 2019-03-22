@@ -48,7 +48,7 @@ This will produce multiple artefacts under the __dist__ folder.
 3. Commit your changes: `git cm 'your message'`
 4. Get the current verison: `npm run v`
 5. Bump to higher version: `npm run rls <the new version>`
-6: Publish: `npm run push`
+6. Publish: `npm run push`
 
 This will host the minified and unminified versions to [https://unpkg.com/@neap/fairplay-widgetjs](https://unpkg.com/@neap/fairplay-widgetjs).
 

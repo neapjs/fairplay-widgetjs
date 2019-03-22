@@ -1,23 +1,23 @@
 /*
 Colors:
-    - Primary:              #4eb749 (Green)
+    - Primary:              #F3476D (Pink)
     - Text:                 #868686 (Grey)
     - Link:                 #666666 (Dark Grey)
     - Hover Link:           #333333 (Black)
-    - Job Card Border :     #D5D5D5 (Dark Grey)
+    - Job Card Border:      #D5D5D5 (Dark Grey)
     - Job Card Background:  #FAFAFA (Light Grey)
     - Menu Separator:       #E8E8E8 (Very Light Grey)
-    - Remove Filter Link    #F60    (Orange)
+    - Remove Filter Link:   #F3476D (Pink)
+    - Highlights:           #F3476D (Pink)
+    - Border Shading 1:     #E8E8E8 (Very Light Grey)
+    - Border Shading 2:     #FCCED9 (Very Light Pink)
 
 Style:
     - Job Card Corner Radius: 5px (class .fp-job-holder)
     - Page Button Corner Radius: 3px (class fairplay-pagination a)
-
  */
 
-
 #fp-wrapper {
-    font-family: 'Open Sans', Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     font-size: 14px;
     color: #868686;
@@ -35,7 +35,7 @@ Style:
 }
 
 #fp-wrapper a {
-    color: #4eb749;
+    color: #F3476D;
     -webkit-transition: all 0.3s ease-in-out;
     -moz-transition: all 0.3s ease-in-out;
     -o-transition: all 0.3s ease-in-out;
@@ -45,7 +45,7 @@ Style:
 
 #fp-wrapper a:hover,
 #fp-wrapper a:active {
-    color: #4eb749;
+    color: #F3476D;
     text-decoration: none;
 }
 
@@ -55,7 +55,6 @@ Style:
 #fp-wrapper h4,
 #fp-wrapper h5,
 #fp-wrapper h6 {
-    font-family: 'Open Sans', Arial, sans-serif;
     font-weight: 300;
     margin-top: 0;
     color: #333333;
@@ -76,58 +75,31 @@ Style:
 
 #fp-wrapper ul,
 #fp-wrapper ol {
-    padding-left: 23px;
+    
 }
 
 #fp-side-left {
     margin-top: 10px;
 }
 
-/* 1. END: Global */
-
-
-
-/*BOOTSTRAP*/
 .fp-btn {
-    display: inline-block;
-    margin-bottom: 0;
-    font-weight: 900;
-    text-align: center;
-    vertical-align: middle;
-    cursor: pointer;
-    background-image: none;
-    border: 1px solid transparent;
-    white-space: nowrap;
-    padding: 6px 12px;
-    font-size: 14px;
-    line-height: 1.42857143;
-    border-radius: 4px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none
+
 }
 
 .fp-btn:focus,
 .fp-btn:active:focus,
 .fp-btn.fp-active:focus {
-    outline: thin dotted;
-    outline: 5px auto -webkit-focus-ring-color;
-    outline-offset: -2px
+    
 }
 
 .fp-btn:hover,
 .fp-btn:focus {
-    color: #333333;
-    text-decoration: none
+    
 }
 
 .fp-btn:active,
 .fp-btn.fp-active {
-    outline: 0;
-    background-image: none;
-    -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125)
+    
 }
 
 .fp-btn.disabled,
@@ -142,9 +114,7 @@ fieldset[disabled] .fp-btn {
 }
 
 .fp-btn-primary {
-    color: #fff;
-    background-color: #ff931e;
-    border-color: #ff8704
+    
 }
 
 .fp-btn-primary:hover,
@@ -152,15 +122,13 @@ fieldset[disabled] .fp-btn {
 .fp-btn-primary:active,
 .fp-btn-primary.fp-active,
 .open>.dropdown-toggle.fp-btn-primary {
-    color: #fff;
-    background-color: #ea7a00;
-    border-color: #c66700
+
 }
 
 .fp-btn-primary:active,
 .fp-btn-primary.fp-active,
 .open>.dropdown-toggle.fp-btn-primary {
-    background-image: none
+
 }
 
 .fp-btn-primary.disabled,
@@ -178,8 +146,7 @@ fieldset[disabled] .fp-btn-primary:active,
 .fp-btn-primary.disabled.fp-active,
 .fp-btn-primary[disabled].fp-active,
 fieldset[disabled] .fp-btn-primary.fp-active {
-    background-color: #ff931e;
-    border-color: #ff8704
+    
 }
 
 .fp-btn-primary .badge {
@@ -217,19 +184,19 @@ fieldset[disabled] .fp-btn-primary.fp-active {
     background-color: #fff;
     background-image: none;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 4px !important;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
     -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }
 
 .fp-form-control:focus {
     border-color: #66afe9;
     outline: 0;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, 0.6);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, 0.6)
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, 0.6);
 }
 
 .fp-form-control::-moz-placeholder {
@@ -372,12 +339,21 @@ textarea.fp-form-control {
 #fp-side-drop-menu a {
     display: block;
     margin: 0;
-    padding: 10px 5px;
+    padding: 10px 10px;
     border-top: 1px solid #E8E8E8;
+    border-left: 4px solid #FCCED9;
+}
+
+.fp-search-query p {
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 
 #fp-side-drop-menu ul li a {
     color: #868686;
+    border-left: 4px solid #E8E8E8;
 }
 
 #fp-side-drop-menu a:hover {
@@ -392,22 +368,11 @@ textarea.fp-form-control {
 }
 
 .fp-btn {
-    font-size: 12px;
-    font-weight: bold;
-    text-transform: uppercase;
-    text-shadow: none;
+    
 }
 
 .fp-btn-primary {
-    background-color: rgba(0, 0, 0, 0);
-    border-color: #4eb749;
-    border-radius: 2em;
-    border-width: 2px;
-    color: #333333;
-    font-family: "Open Sans", Arial, sans-serif;
-    font-size: 16px;
-    font-weight: 300;
-    padding: 12px 48px;
+    
 }
 
 .fp-btn-primary:hover,
@@ -415,13 +380,12 @@ textarea.fp-form-control {
 .fp-btn-primary:active,
 .fp-btn-primary.fp-active,
 .open>.dropdown-toggle.fp-btn-primary {
-    background-color: #4eb749;
+    
 }
 
 .fp-btn-primary:hover,
 .fp-btn-primary:focus {
-    border-color: transparent;
-    background-color: #4eb749;
+
 }
 
 .fp-form-control::-moz-placeholder {
@@ -477,6 +441,14 @@ textarea.fp-form-control {
 .fp-description-holder .locandsalary span {
     display: block;
     margin: 0;
+}
+
+.fp-description-holder .locandsalary span:first-child {
+    font-weight: bold;
+}
+
+.fp-description-holder .locandsalary span:first-child::before {
+    
 }
 
 .fp-description-holder {
@@ -550,17 +522,20 @@ textarea.fp-form-control {
     -o-transition: 0.2s linear;
     transition: 0.2s linear;
     clear: both;
-    border: solid 1px #D5D5D5;
+    border-bottom: dashed 4px #D5D5D5;
     background: #FAFAFA;
-    margin: 0 0 1em 0;
-    padding: 0.8em 1em;
+    margin: 0 0 2em 0;
+    padding: 1.8em 1.5em;
     width: 100%;
-    border-radius: 5px;
+    border-radius: 0px;
 }
 
 .fp-job-holder:hover {
+    /*
     box-shadow: 1px 1px 6px #C1BAC1;
     background: #fff;
+    */
+    border-bottom: dashed 4px #F3476D;
 }
 
 .fp-job-holder a {
@@ -581,10 +556,10 @@ textarea.fp-form-control {
     color: #666666;
     background: transparent;
     display: inline-block;
-    font-family: 'Open Sans', Arial, sans-serif;
     font-size: 1.2em;
     font-weight: 600;
     line-height: 1.3em;
+    margin-bottom: 10px;
 }
 
 .fp-job-holder:hover .fp-job-toplink a {
@@ -616,32 +591,20 @@ textarea.fp-form-control {
 }
 
 .fp-mini-new-buttons {
-    -webkit-transition: all 0.3s ease-in-out;
-    -moz-transition: all 0.3s ease-in-out;
-    -o-transition: all 0.3s ease-in-out;
-    -ms-transition: all 0.3s ease-in-out;
-    transition: all 0.3s ease-in-out;
-    border-radius: 2em;
-    cursor: pointer;
-    display: inline-block;
-    box-shadow: none !important;
-    border: 2px solid #4AB849 !important;
-    text-decoration: none;
+
 }
 
 .fp-mini-new-buttons:hover {
     color: #fff !important;
-    background-color: #4AB849;
-    border-color: #4AB849;
+    background-color: #F3476D;
+    border-color: #F3476D;
 }
 
 input.fp-mini-new-buttons {
-    -webkit-appearance: none;
+
 }
 
 .neap-salary-type {
-    padding-left: 1em;
-    padding-right: 1em;
     margin-top: 1.5em;
     margin-bottom: 1.5em
 }
@@ -655,8 +618,6 @@ input.fp-mini-new-buttons {
 
 .neap-salary-bands {
     display: table;
-    padding-left: 1em;
-    padding-right: 1em;
     margin-bottom: 1.5em
 }
 
@@ -665,7 +626,7 @@ input.fp-mini-new-buttons {
     padding-left: 1em;
     padding-right: 1em;
     margin-bottom: 1.5em;
-    color: red;
+    color: #F3476D;
 }
 
 .neap-salary-min,
@@ -694,7 +655,6 @@ input.fp-mini-new-buttons {
 .neap-salary-bands .neap-salary-max input {
     display: block;
     width: 100%;
-    padding-left: 2em;
     margin: 0;
     box-sizing: border-box
 }
@@ -708,29 +668,59 @@ input.fp-mini-new-buttons {
 
 .neap-salary-submit {
     clear: both;
-    padding-left: 1em;
-    padding-right: 1em;
     padding-bottom: 1.5em
 }
 
+.neap-salary-submit .fp-btn {
+    width: 100%;
+    cursor: pointer;
+    color: #FFF;
+    background-color: #F3476D;
+    border-color: #F3476D;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    transition: 
+        color .15s ease-in-out,
+        background-color .15s ease-in-out,
+        border-color .15s ease-in-out,
+        box-shadow .15s ease-in-out;
+}
+
+.neap-salary-submit .fp-btn:hover {
+    background-color: black;
+    border-color: black;
+}
+
 .fp-red-remove {
-    color: #F60 !important;
-    float: right;
+    color: #F3476D !important;
+    transform: rotate(45deg);
 }
 
 .fp-red-remove a {
-    color: #F60 !important;
-    display: inline-block;
+    color: #F3476D !important;
+    padding: 5px 5px 5px 5px !important;
 }
 
-.fp-red-remove:hover,
 .fp-red-remove:hover a {
-    color: #F60 !important;
+    color: #F3476D !important;
 }
 
 .fp-search-query {
     /* search result filter box */
     margin: 0 0 0 0;
+    font-weight: bold;
+    color: #F3476D;
 }
 
 .fp-search-query>h3 {
@@ -768,19 +758,24 @@ input.fp-mini-new-buttons {
     padding-bottom: 2em;
 }
 
+#fairplay-pagination {
+    text-align: center;
+}
+
 #fairplay-pagination a { 
-    border: solid 1px #BEBEBE;
     cursor: pointer;
     display: inline-block;
     font-size: small;
     margin: 0 0.5em 0 0;
-    padding: 0.5em 0.5em;
+    padding: 0.1em 0.5em;
     text-align: center;
-    border-radius: 3px;
+    border-radius: 0px;
+    color: #666666;
 }
 
 #fairplay-pagination .fp-active {
-    font-weight: 700;
+    font-weight: bold;
+    color: #F3476D;
 }
 
 @media (max-width: 767px) {
@@ -790,7 +785,7 @@ input.fp-mini-new-buttons {
     }
 
     .fp-btn-primary {
-        font-size: 14px;
+    
     }
 
     .fp-job-breadcrumbs {
@@ -847,7 +842,3 @@ input.fp-mini-new-buttons {
         display: none;
     }
 }
-
-
-/* 1. START: Global */
-
