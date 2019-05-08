@@ -1,19 +1,47 @@
 # Table of Contents
 
+> - [Getting Started](#getting-started)
 > - [Where Am I Hosted?](#where-am-i-hosted)
 > - [How To](#how-to)
 > - [Annexes](#annexes)
-> 	- [JobAdder - Neap Board Categories](#jobadder-neap-board-categories)
+> - [JobAdder - Neap Board Categories](#jobadder-neap-board-categories)
+
+# Getting Started
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+	<title>View JS Test</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs/dist/fairplay.min.css">
+</head>
+<body>
+	<div id="wrapper"></div>
+	<script src="https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs"></script>
+	<script type="text/javascript">
+		fairplay({ 
+			el: '#wrapper',
+			// clientId: 'dewdwq',
+			mode:'dev', 					// Optional. When set to 'dev', the 'clientId' property is not required.
+			pageSize: 2,					// Optional. Default is 10. 
+			categories: { 					// Optional. This object overides the Neap's JobAdder's Board category names
+				5843: 'Internet & Telco', 
+				5821: 'Internet & Telco' 
+			}
+		})
+	</script>
+</body>
+```
 
 # Where Am I Hosted?
 
-[https://unpkg.com/@neap/fairplay-widgetjs](https://unpkg.com/@neap/fairplay-widgetjs)
+- JS: [https://unpkg.com/@neap/fairplay-widgetjs](https://unpkg.com/@neap/fairplay-widgetjs)
+- CSS: [https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs/dist/fairplay.min.css](https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs/dist/fairplay.min.css)
 
 You can access that JS and the default CSS using a specific version as follow:
-* [https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.js](https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.js)
-* [https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.min.js](https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.min.js)
-* [https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.css](https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.css)
-* [https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.min.css](https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.min.css)
+* [https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.0.13/dist/fairplay.min.js](https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.0.13/dist/fairplay.min.js)
+* [https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.0.13/dist/fairplay.min.css](https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.0.13/dist/fairplay.min.css)
 
 # How To
 ## How To Use Me
