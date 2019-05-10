@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.0.16"></a>
+## [0.0.16](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.0.15...v0.0.16) (2019-05-10)
+
+
+### Bug Fixes
+
+* The widget does not show at all if the filter is not toggled ([e80db32](https://gitlab.com/neap/fairplay-widgetjs/commit/e80db32))
+
+
+
 <a name="0.0.15"></a>
 ## [0.0.15](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.0.14...v0.0.15) (2019-05-10)
 
