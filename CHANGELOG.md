@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.0.15"></a>
+## [0.0.15](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.0.14...v0.0.15) (2019-05-10)
+
+
+### Features
+
+* Add support for hiding the search count ([3f247cb](https://gitlab.com/neap/fairplay-widgetjs/commit/3f247cb))
+
+
+
 <a name="0.0.14"></a>
 ## [0.0.14](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.0.10...v0.0.14) (2019-05-10)
 
