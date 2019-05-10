@@ -427,8 +427,8 @@ const _getFilterDetails = (filters, name, defaultValue) => {
 Vue.component('neap-widget', {
 	props: ['jobads', 'filter'],
 	template: `
-	<div id="fp-wrapper" class="fp-box fp-container" v-if="filterToggled">
-		<div id="fp-side-left" class="fp-col-sm-4 fp-col-md-3" :class="sideMenuClass">
+	<div id="fp-wrapper" class="fp-box fp-container">
+		<div id="fp-side-left" class="fp-col-sm-4 fp-col-md-3" :class="sideMenuClass" v-if="filterToggled">
 			<left-menu-status></left-menu-status>
 			<left-menu :filter="filter"></left-menu>
 		</div>
