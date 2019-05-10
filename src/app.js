@@ -427,7 +427,7 @@ const _getFilterDetails = (filters, name, defaultValue) => {
 Vue.component('neap-widget', {
 	props: ['jobads', 'filter'],
 	template: `
-	<div id="fp-wrapper" class="fp-box fp-container">
+	<div id="fp-wrapper" class="fp-box fp-container" v-if="filterToggled">
 		<div id="fp-side-left" class="fp-col-sm-4 fp-col-md-3" :class="sideMenuClass">
 			<left-menu-status></left-menu-status>
 			<left-menu :filter="filter"></left-menu>
@@ -435,7 +435,7 @@ Vue.component('neap-widget', {
 		
 		<div id="fp-content" class="fp-col-sm-8 fp-col-md-9 fp-col-xs-12" :class="contentClass">
 			<div class="fp-content-holder">
-				<job-search-header></job-search-header>
+				<job-search-header v-if="showSearchCount"></job-search-header>
 				<jobads v-bind:jobads="jobads"></jobads>
 				<page-buttons></page-buttons>
 			</div>
@@ -446,6 +446,14 @@ Vue.component('neap-widget', {
 		return {
 			sideMenuClass:'fp-hidden-xs', // by default the side menu is not visible in mobile
 			contentClass:'' // by default the content is visible
+		}
+	},
+	computed: {
+		filterToggled() {
+			return this.filter === undefined || this.filter.toggled === undefined ? true : this.filter.toggled
+		},
+		showSearchCount() {
+			return this.filter === undefined || this.filter.searchCountToggled === undefined ? true : this.filter.searchCountToggled
 		}
 	},
 	methods: {

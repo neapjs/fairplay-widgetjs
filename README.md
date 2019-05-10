@@ -72,7 +72,11 @@ This will produce multiple artefacts under the __dist__ folder.
 ## How To Deploy A New Version
 
 1. Make sure the code is linted properly: `npm run lint`
-2. Build all the artefacts: `npm run build`
+2. Build all the artefacts: 
+	```
+	npm run dev
+	npm run build
+	```
 3. Commit your changes: `git cm 'your message'`
 4. Get the current verison: `npm run v`
 5. Bump to higher version: `npm run rls <the new version>`
