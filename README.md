@@ -52,7 +52,7 @@ Simply run this:
 npm run dev
 ```
 
-This will host 2 versionof the widget:
+This will host 2 version of the widget:
 
 __Dev__: [http://localhost:8080/dev](http://localhost:8080/dev)
 __Prod__: [http://localhost:8080/prod](http://localhost:8080/prod)

@@ -126,9 +126,21 @@ function _getLeftMenuData(ads, categories) {
 			acc.menu.salaryTypes.push({ id: DAILY_ID, name: 'Daily Rate' })
 		}
 
+		// 5. Extract 'consultants'
+		if (ad.owner && ad.owner.id) {
+			var consultantIds = _getCategoryId(ad.owner.id, categories)
+			var consultantName = categories[ad.owner.id] || ad.owner.fullName
+			var consultantStrIds = consultantIds.join('_')
+			if (acc._consultants[consultantStrIds])
+				acc._consultants[consultantStrIds].count++
+			else {
+				acc._consultants[consultantStrIds] = { id:consultantIds, name:consultantName, count:1, roles:[] }
+				acc.menu.consultants.push(acc._consultants[consultantStrIds])
+			}
+		}
 
 		return acc
-	}, { menu: { professions:[], locations:[], workTypes:[], salaryTypes:[] }, _salaryTypes:{}, _professions:{}, _locations:{}, _workTypes:{}, _roles:{}, _areas:{} })
+	}, { menu: { professions:[], locations:[], workTypes:[], salaryTypes:[], consultants:[] }, _salaryTypes:{}, _professions:{}, _locations:{}, _workTypes:{}, _roles:{}, _areas:{}, _consultants:{} })
 
 	var menu = data.menu
 	
@@ -148,6 +160,10 @@ function _getLeftMenuData(ads, categories) {
 	menu.workTypes.forEach(function(x) {
 		x.strId = _idToString(x.id)
 	})
+	menu.consultants = menu.consultants || []
+	menu.consultants.forEach(function(x) {
+		x.strId = _idToString(x.id)
+	})
 
 	return menu
 }
@@ -160,7 +176,7 @@ function _escapeJobCategoriesName(name){
 	return encodeURIComponent((name || '').toLowerCase().trim().replace(/^\s+|\s+$/g, '').replace(/&/g, 'and').replace(/[^a-zA-Z0-9]/g, '-').replace(/(-)\1+/, '-'))
 }
 
-function _fetchJobAds({ clientId, categories, mode }) {
+function _fetchJobAds({ clientId, categories, mode, ownerId, ownerEmail }) {
 	let jobApi
 	if (mode == 'dev') {
 		jobApi = JOB_API_TEST
@@ -227,8 +243,10 @@ function _fetchJobAds({ clientId, categories, mode }) {
 							ad.location.area.name = categories[ad.location.area.id]
 						if (ad.workType && ad.workType.id && categories[ad.workType.id])
 							ad.workType.name = categories[ad.workType.id]
+						if (ad.consultant && ad.consultant.id && categories[ad.consultant.id])
+							ad.consultant.name = categories[ad.consultant.id]
 
-						// 3. Create a job ad link:
+						// 4. Create a job ad link:
 						var pathname = []
 						if (ad.profession && ad.profession.name)
 							pathname.push(_escapeJobCategoriesName(ad.profession.name))
@@ -237,7 +255,7 @@ function _fetchJobAds({ clientId, categories, mode }) {
 						pathname.push(ad.id)
 						ad.link = JOB_AD_URL + '/' + pathname.join('/')
 
-						// 4. Create a profession search link:
+						// 5. Create a profession search link:
 						if (ad.profession && ad.profession.id && ad.profession.name) {
 							var proIds = _getCategoryId(ad.profession.id, categories)
 							ad.profession.link = '?professions=' + encodeURIComponent(ad.profession.name) + '-' + proIds.join('_')
@@ -255,14 +273,26 @@ function _fetchJobAds({ clientId, categories, mode }) {
 			}
 		}
 
+		const whereClause = [`clientId: "${clientId}"`]
+		if (ownerId)
+			whereClause.push(`ownerId: "${ownerId}"`)
+		if (ownerEmail)
+			whereClause.push(`ownerEmail: "${ownerEmail}"`)
+
 		var api_url = jobApi + '?query=' + encodeURIComponent('{ \n' + 
-			'jobAds(where:{clientId:"' + clientId + '"}) { \n' +
+			`jobAds(where:{${whereClause.join(', ')}}) { \n` +
 				'data{ \n' +
 					'id \n' +
 					'title \n' +
 					'summary \n' +
 					'bulletPoints \n' +
 					'created \n' +
+					'owner { \n' +
+						'id \n' +
+						'firstName \n' +
+						'lastName \n' +
+						'email \n' +
+					'} \n' +
 					'profession{ \n' +
 						'id \n' +
 						'name \n' +
@@ -297,24 +327,30 @@ function _fetchJobAds({ clientId, categories, mode }) {
 	})
 }
 
+const _mapJobAds = data => (data || []).map(ad => {
+	if (ad && ad.owner) 
+		ad.owner.fullName = [ad.owner.firstName,ad.owner.lastName].filter(x => x).join(' ')
+	return ad
+})
+
 function _getJobAds(options) { 
 	options = options || {}
-	return _fetchJobAds(options).then(function(res){ return res.data })
+	return _fetchJobAds(options).then(function(res){ return _mapJobAds(res.data) })
 	// retry attempt 1
 		.catch(function(err1){
 			console.log('Error while fetching jobs from the server (1st attempt): ' + err1.status + ' - ' + err1.message)
 			return  _delay(1000).then(function(){
-				return _fetchJobAds(options).then(function(res){return res.data})
+				return _fetchJobAds(options).then(function(res){return _mapJobAds(res.data)})
 				// retry attempt 2
 					.catch(function(err2){
 						console.log('Error while fetching jobs from the server (2nd attempt): ' + err2.status + ' - ' + err2.message)
 						return  _delay(2000).then(function(){
-							return _fetchJobAds(options).then(function(res){return res.data})
+							return _fetchJobAds(options).then(function(res){return _mapJobAds(res.data)})
 							// retry attempt 2
 								.catch(function(err3){
 									console.log('Error while fetching jobs from the server (3rd attempt): ' + err3.status + ' - ' + err3.message)
 									return  _delay(3000).then(function(){
-										return _fetchJobAds(options).then(function(res){return res.data}).catch(function(){return []})
+										return _fetchJobAds(options).then(function(res){return _mapJobAds(res.data)}).catch(function(){return []})
 									})
 								})
 						})
@@ -326,7 +362,7 @@ function _getJobAds(options) {
 function _getQueryStringFilters(){
 	var q = _getQueryString() || {}
 	var filters = []
-	var stdTypes = ['professions', 'roles', 'locations', 'areas', 'workTypes']
+	var stdTypes = ['professions', 'roles', 'locations', 'areas', 'workTypes', 'consultants']
 	stdTypes.forEach(function(stdType) {
 		var parts = (q[stdType] || '').split('-')
 		if (parts.length > 0) {
@@ -378,13 +414,23 @@ function _updateQueryString(queryString) {
 		window.location.replace(newUrl)
 } 
 
+const _getFilterDetails = (filters, name, defaultValue) => {
+	if (filters && filters[name]) {
+		return { 
+			name: filters[name].name || defaultValue, 
+			toggled: filters[name].toggled === undefined ? true : filters[name].toggled
+		}
+	} else
+		return { name:defaultValue, toggled:true }
+}
+
 Vue.component('neap-widget', {
-	props: ['jobads'],
+	props: ['jobads', 'filter'],
 	template: `
 	<div id="fp-wrapper" class="fp-box fp-container">
 		<div id="fp-side-left" class="fp-col-sm-4 fp-col-md-3" :class="sideMenuClass">
 			<left-menu-status></left-menu-status>
-			<left-menu></left-menu>
+			<left-menu :filter="filter"></left-menu>
 		</div>
 		
 		<div id="fp-content" class="fp-col-sm-8 fp-col-md-9 fp-col-xs-12" :class="contentClass">
@@ -419,50 +465,59 @@ Vue.component('neap-widget', {
 })
 
 Vue.component('left-menu', {
+	props: ['filter'],
 	template: `
-	<ul id="fp-side-drop-menu" class="fp-side-menu-cursor">
-		<li :class="menu.professions.hidden">
-			<a @click="expandMenu('professions')">Classification</a>
+	<ul id="fp-side-drop-menu" class="fp-side-menu-cursor" v-if="filterToggled">
+		<li :class="menu.professions.hidden" v-if="classification.toggled">
+			<a @click="expandMenu('professions')">{{ classification.name }}</a>
 			<ul :class="menu.professions.expand">
 				<li v-for="item in menu.professions.items">
 					<a @click="filterBy(item.strId, item.name, 'professions')">{{ item.name }} <span>({{ item.count }})</span></a>
 				</li>
 			</ul>
 		</li>
-		<li :class="menu.roles.hidden">
-			<a @click="expandMenu('roles')">Sub-classification</a>
+		<li :class="menu.roles.hidden" v-if="subClassification.toggled">
+			<a @click="expandMenu('roles')">{{ subClassification.name }}</a>
 			<ul :class="menu.roles.expand">
 				<li v-for="item in menu.roles.items">
 					<a @click="filterBy(item.strId, item.name, 'roles')">{{ item.name }} <span>({{ item.count }})</span></a>
 				</li>
 			</ul>
 		</li>
-		<li :class="menu.locations.hidden">
-			<a @click="expandMenu('locations')">Location</a>
+		<li :class="menu.locations.hidden" v-if="location.toggled">
+			<a @click="expandMenu('locations')">{{ location.name }}</a>
 			<ul :class="menu.locations.expand">
 				<li v-for="item in menu.locations.items">
 					<a @click="filterBy(item.strId, item.name, 'locations')">{{ item.name }} <span>({{ item.count }})</span></a>
 				</li>
 			</ul>
 		</li>
-		<li :class="menu.areas.hidden">
-			<a @click="expandMenu('areas')">Area</a>
+		<li :class="menu.areas.hidden" v-if="area.toggled">
+			<a @click="expandMenu('areas')">{{ area.name }}</a>
 			<ul :class="menu.areas.expand">
 				<li v-for="item in menu.areas.items">
 					<a @click="filterBy(item.strId, item.name, 'areas')">{{ item.name }} <span>({{ item.count }})</span></a>
 				</li>
 			</ul>
 		</li>
-		<li :class="menu.workTypes.hidden">
-			<a @click="expandMenu('workTypes')">Work type</a>
+		<li :class="menu.workTypes.hidden" v-if="workType.toggled">
+			<a @click="expandMenu('workTypes')">{{ workType.name }}</a>
 			<ul :class="menu.workTypes.expand">
 				<li v-for="item in menu.workTypes.items">
 					<a @click="filterBy(item.strId, item.name, 'workTypes')">{{ item.name }} <span>({{ item.count }})</span></a>
 				</li>
 			</ul>
 		</li>
-		<li v-if="menu.salaryTypes && menu.salaryTypes.length > 0">
-			<a href="#">Salary</a>
+		<li :class="menu.consultants.hidden" v-if="consultant.toggled">
+			<a @click="expandMenu('consultants')">{{ consultant.name }}</a>
+			<ul :class="menu.consultants.expand">
+				<li v-for="item in menu.consultants.items">
+					<a @click="filterBy(item.strId, item.name, 'consultants')">{{ item.name }} <span>({{ item.count }})</span></a>
+				</li>
+			</ul>
+		</li>
+		<li v-if="salary.toggled && menu.salaryTypes && menu.salaryTypes.length > 0">
+			<a href="#">{{ salary.name }}</a>
 			<div class="neap-salary-type">
 				<select name="salary-type" v-model="menu.salary.id" class="fp-form-control">
 					<option v-for="(item,idx) in menu.salaryTypes" :value="item.id" :selected="idx == 0">{{ item.name }}</option>
@@ -528,6 +583,12 @@ Vue.component('left-menu', {
 					items: [],
 					selectedIds: null
 				},
+				consultants: {
+					hidden: '',
+					expand: 'fp-collapse-menu',
+					items: [],
+					selectedIds: null
+				},
 				salaryTypes:[],
 				salary: {
 					id: 1,
@@ -536,6 +597,32 @@ Vue.component('left-menu', {
 				}
 			}
 		}
+	},
+	computed: {
+		filterToggled() {
+			return this.filter === undefined || this.filter.toggled === undefined ? true : this.filter.toggled
+		},
+		classification() {
+			return _getFilterDetails(this.filter, 'classification', 'Classification')
+		},
+		subClassification() {
+			return _getFilterDetails(this.filter, 'subClassification', 'Role')
+		},
+		location() {
+			return _getFilterDetails(this.filter, 'location', 'Location')
+		},
+		area() {
+			return _getFilterDetails(this.filter, 'area', 'Area')
+		},
+		workType() {
+			return _getFilterDetails(this.filter, 'workType', 'Work type')
+		},
+		consultant() {
+			return _getFilterDetails(this.filter, 'consultant', 'Consultant')
+		},
+		salary() {
+			return _getFilterDetails(this.filter, 'salary', 'Salary')
+		},
 	},
 	methods: {
 		isNumber(evt) {
@@ -615,6 +702,9 @@ Vue.component('left-menu', {
 				} else if (type == 'roles') {
 					vm.menu.roles.hidden = 'fp-hidden'
 					vm.menu.roles.selectedIds = ids
+				} else if (type == 'consultants') {
+					vm.menu.consultants.hidden = 'fp-hidden'
+					vm.menu.consultants.selectedIds = ids
 				}
 			})
 			this.updateSubMenus()
@@ -643,6 +733,9 @@ Vue.component('left-menu', {
 				} else if (type == 'roles') {
 					this.menu.roles.hidden = ''
 					this.menu.roles.selectedIds = null
+				} else if (type == 'consultants') {
+					this.menu.consultants.hidden = ''
+					this.menu.consultants.selectedIds = null
 				}
 
 				this.updateSubMenus()
@@ -656,6 +749,7 @@ Vue.component('left-menu', {
 			this.menu.professions.items = (leftMenuData || {}).professions || []
 			this.menu.locations.items = (leftMenuData || {}).locations || []
 			this.menu.workTypes.items = (leftMenuData || {}).workTypes || []
+			this.menu.consultants.items = (leftMenuData || {}).consultants || []
 			this.menu.salaryTypes = (leftMenuData.salaryTypes || []).sort(function(a,b){return a.id-b.id})
 			var id = (this.menu.salaryTypes[0] || {}).id 
 			if (id)
@@ -699,7 +793,7 @@ Vue.component('left-menu', {
 			this.menu[menuName].hidden = ''
 			// This menu is not expanded, so expand it
 			if (this.menu[menuName].expand == 'fp-collapse-menu') {
-				var allMenus = ['professions', 'roles', 'locations', 'areas', 'workTypes']
+				var allMenus = ['professions', 'roles', 'locations', 'areas', 'workTypes', 'consultants']
 				var hideMenus = allMenus.filter(function(name) { return name != menuName })
 				hideMenus.forEach(function(name) {
 					vm.menu[name].expand = 'fp-collapse-menu'
@@ -908,6 +1002,17 @@ Vue.component('job-search-header', {
 	}
 })
 
+/**
+ * Creates a Fairplay widget and attaches it under the DOM identified by ''. 
+ * 
+ * @param  {String} options.el				DOM under which the Fairplay widget is immediately attached (e.g., '#main'). 
+ * @param  {String} options.clientId		Required in when 'mode' is not equal to 'dev'. 
+ * @param  {String} options.mode			Default null. Valid value: 'dev'. If set to 'dev', the test API is used and the 'clientId' is not required.
+ * @param  {Number} options.pageSize
+ * @param  {Number} options.filter			e.g., { classification: { toggled:true, name:'Profession' }, salary: { toggled:false }, consultant: { toggled:false, value:'nic@neap.co' } }				
+ * @param  {Object} options.categories		e.g., { 5843: 'Internet & Telco', 5821: 'Internet & Telco' }
+ * @return {Void}        
+ */
 var fairplay = function(options) {
 	options = options || {}
 	options.categories = options.categories || {}
@@ -917,14 +1022,15 @@ var fairplay = function(options) {
 	if (!el)
 		throw new Error('Missing required argument \'el\'. Please set up the \'fairplay\' widget with a valid CSS selector (example: fairplay({ el: \'#container\', clientId:\'your-client-id\' }))')
 
-	document.querySelector(el).innerHTML = document.querySelector(el).innerHTML + '<neap-widget v-bind:jobads="jobads"></neap-widget>'
+	document.querySelector(el).innerHTML = document.querySelector(el).innerHTML + '<neap-widget v-bind:jobads="jobads" v-bind:filter="filter"></neap-widget>'
 	
 	new Vue({
 		el: el,
 		data: {
 			allJobAds:[],
 			allFilteredJobAds:[],
-			jobads:[]
+			jobads:[],
+			filter:options.filter
 		},
 		created(){
 			var vm = this
@@ -950,6 +1056,8 @@ var fairplay = function(options) {
 						filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.location && jobAd.location.area && filterIds[jobAd.location.area.id] })
 					else if (filter.type == 'workTypes')
 						filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.workType && filterIds[jobAd.workType.id] })
+					else if (filter.type == 'consultants') 
+						filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.owner && filterIds[jobAd.owner.id] })
 					else if (filter.type == 'salary') {				
 						filteredJobAds = filteredJobAds.filter(function(jobAd) { 
 							return jobAd.salary 
@@ -969,6 +1077,7 @@ var fairplay = function(options) {
 								|| jobAd.location && jobAd.location.name && jobAd.location.name.toLowerCase().indexOf(k) >= 0
 								|| jobAd.location && jobAd.location.area && jobAd.location.area.name && jobAd.location.area.name.toLowerCase().indexOf(k) >= 0
 								|| jobAd.workType && jobAd.workType.name && jobAd.workType.name.toLowerCase().indexOf(k) >= 0
+								|| jobAd.owner && jobAd.owner.fullName && jobAd.owner.fullName.toLowerCase().indexOf(k) >= 0
 								|| jobAd.summary && jobAd.summary.toLowerCase().indexOf(k) >= 0
 						})
 					}
@@ -1051,6 +1160,14 @@ var fairplay = function(options) {
 			_eventBus.$on('showSearch', function() {
 				_eventBus.$emit('neap-widget.show-menu')
 			})
+
+			if (options.filter && options.filter.consultant && options.filter.consultant.value) {
+				const consultantId = options.filter.consultant.value
+				if (typeof(consultantId) == 'number' || /^[0-9]([0-9]+?)[0-9]$/.test(consultantId))
+					options.ownerId = consultantId
+				else
+					options.ownerEmail = consultantId
+			}
 
 			_getJobAds(options).then(function(jobs) {
 				vm.allJobAds = jobs
