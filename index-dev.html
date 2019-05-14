@@ -9,49 +9,53 @@
 	<div id="wrapper"></div>
 	<script src="/app.js"></script>
 	<script type="text/javascript">
-		fairplay({ 
+		const fp = new Fairplay({ 
+			//clientId:'1chfi-oqwg4-0ulzl-y36zv', 
+			mode:'dev' // Optional. When set to 'dev', the 'clientId' property is not required.
+		})
+		fp.createWidget({
 			el: '#wrapper',
-			//clientId: 'de3de',
-			mode:'dev', 					// Optional. When set to 'dev', the 'clientId' property is not required.
 			pageSize: 2,					// Optional. Default is 10. 
 			categories: { 					// Optional. This object overides the Neap's JobAdder's Board category names
 				5843: 'Internet & Telco', 
 				5821: 'Internet & Telco' 
-			},
-			filter:{
-				toggled: false,
-				searchCountToggled: false,
-				classification:{
-					name: 'Professions',
-					toggled:true
-				}, 
-				subClassification:{
-					name: 'Role',
-					toggled:true
-				}, 
-				location:{
-					name: 'Cities',
-					toggled:true
-				}, 
-				area:{
-					name: 'Zones',
-					toggled:true
-				}, 
-				workType:{
-					name: 'Types',
-					toggled:true
-				}, 
-				consultant:{
-					name: 'Recruiters',
-					toggled:true,
-					//value:'nic@neap.co'
-				}, 
-				salary:{
-					name: 'Wage Range',
-					toggled:false
-				}
 			}
+			// filter:{
+			// 	toggled: true,
+			// 	searchCountToggled: false,
+			// 	classification:{
+			// 		name: 'Professions',
+			// 		toggled:true
+			// 	}, 
+			// 	subClassification:{
+			// 		name: 'Role',
+			// 		toggled:true
+			// 	}, 
+			// 	location:{
+			// 		name: 'Cities',
+			// 		toggled:true
+			// 	}, 
+			// 	area:{
+			// 		name: 'Zones',
+			// 		toggled:true
+			// 	}, 
+			// 	workType:{
+			// 		name: 'Types',
+			// 		toggled:true
+			// 	}, 
+			// 	consultant:{
+			// 		name: 'Recruiters',
+			// 		toggled:true,
+			// 		//value:'nic@neap.co'
+			// 	}, 
+			// 	salary:{
+			// 		name: 'Wage Range',
+			// 		toggled:false
+			// 	}
+			// }
 		})
+		fp.getJobAds({ where:{ } }, (err,data) => { console.log(data) })
+		
 	</script>
 </body>
 </html>

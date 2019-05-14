@@ -20,16 +20,19 @@
 	<div id="wrapper"></div>
 	<script src="https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs"></script>
 	<script type="text/javascript">
-		fairplay({ 
-			el: '#wrapper',
+		var fp = new Fairplay({
 			// clientId: 'dewdwq',
-			mode:'dev', 					// Optional. When set to 'dev', the 'clientId' property is not required.
+			mode:'dev' 					// Optional. When set to 'dev', the 'clientId' property is not required.
+		})
+		fp.createWidget({ 
+			el: '#wrapper',
 			pageSize: 2,					// Optional. Default is 10. 
 			categories: { 					// Optional. This object overides the Neap's JobAdder's Board category names
 				5843: 'Internet & Telco', 
 				5821: 'Internet & Telco' 
 			}
 		})
+		fp.getJobAds({ where:{ professionId:1123 } }, (err,data) => { console.log(data) })
 	</script>
 </body>
 ```

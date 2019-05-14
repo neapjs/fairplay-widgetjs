@@ -44,102 +44,107 @@ function _getLeftMenuData(ads, categories) {
 	ads = ads || []
 	categories = categories || {}
 	var data = ads.reduce(function(acc,ad){
-		// 1. Extract 'professions' & 'roles'
-		if (ad.profession && ad.profession.id) {
-			var professionIds = _getCategoryId(ad.profession.id, categories)
-			var professionName = categories[ad.profession.id] || ad.profession.name
-			var professionStrIds = professionIds.join('_')
-			if (acc._professions[professionStrIds])
-				acc._professions[professionStrIds].count++
-			else {
-				acc._professions[professionStrIds] = { id:professionIds, name:professionName, count:1, roles:[] }
-				acc.menu.professions.push(acc._professions[professionStrIds])
-			}
-
-			if (ad.profession && ad.profession.role && ad.profession.role.id) {
-				var roleIds = _getCategoryId(ad.profession.role.id, categories)
-				var roleName = categories[ad.profession.role.id] || ad.profession.role.name
-				var roleStrIds = roleIds.join('_')
-				if (acc._roles[roleStrIds])
-					acc._roles[roleStrIds].count++
+		try {
+			// 1. Extract 'professions' & 'roles'
+			if (ad.profession && ad.profession.id) {
+				var professionIds = _getCategoryId(ad.profession.id, categories)
+				var professionName = categories[ad.profession.id] || ad.profession.name
+				var professionStrIds = professionIds.join('_')
+				if (acc._professions[professionStrIds])
+					acc._professions[professionStrIds].count++
 				else {
-					acc._roles[roleStrIds] = { id:roleIds, name:roleName, count:1 }
-					acc._professions[professionStrIds].roles.push(acc._roles[roleStrIds])
+					acc._professions[professionStrIds] = { id:professionIds, name:professionName, count:1, roles:[] }
+					acc.menu.professions.push(acc._professions[professionStrIds])
+				}
+
+				if (ad.profession && ad.profession.role && ad.profession.role.id) {
+					var roleIds = _getCategoryId(ad.profession.role.id, categories)
+					var roleName = categories[ad.profession.role.id] || ad.profession.role.name
+					var roleStrIds = roleIds.join('_')
+					if (acc._roles[roleStrIds])
+						acc._roles[roleStrIds].count++
+					else {
+						acc._roles[roleStrIds] = { id:roleIds, name:roleName, count:1 }
+						acc._professions[professionStrIds].roles.push(acc._roles[roleStrIds])
+					}
 				}
 			}
-		}
 
-		// 2. Extract 'locations' & 'areas'
-		if (ad.location && ad.location.id) {
-			var locationIds = _getCategoryId(ad.location.id, categories)
-			var locationName = categories[ad.location.id] || ad.location.name
-			var locationStrIds = locationIds.join('_')
-			if (acc._locations[locationStrIds])
-				acc._locations[locationStrIds].count++
-			else {
-				acc._locations[locationStrIds] = { id:locationIds, name:locationName, count:1, areas:[] }
-				acc.menu.locations.push(acc._locations[locationStrIds])
-			}
-
-			if (ad.location && ad.location.area && ad.location.area.id) {
-				var areaIds = _getCategoryId(ad.location.area.id, categories)
-				var areaName = categories[ad.location.area.id] || ad.location.area.name
-				var areaStrIds = areaIds.join('_')
-				if (acc._areas[areaStrIds])
-					acc._areas[areaStrIds].count++
+			// 2. Extract 'locations' & 'areas'
+			if (ad.location && ad.location.id) {
+				var locationIds = _getCategoryId(ad.location.id, categories)
+				var locationName = categories[ad.location.id] || ad.location.name
+				var locationStrIds = locationIds.join('_')
+				if (acc._locations[locationStrIds])
+					acc._locations[locationStrIds].count++
 				else {
-					acc._areas[areaStrIds] = { id:areaIds, name:areaName, count:1 }
-					acc._locations[locationStrIds].areas.push(acc._areas[areaStrIds])
+					acc._locations[locationStrIds] = { id:locationIds, name:locationName, count:1, areas:[] }
+					acc.menu.locations.push(acc._locations[locationStrIds])
+				}
+
+				if (ad.location && ad.location.area && ad.location.area.id) {
+					var areaIds = _getCategoryId(ad.location.area.id, categories)
+					var areaName = categories[ad.location.area.id] || ad.location.area.name
+					var areaStrIds = areaIds.join('_')
+					if (acc._areas[areaStrIds])
+						acc._areas[areaStrIds].count++
+					else {
+						acc._areas[areaStrIds] = { id:areaIds, name:areaName, count:1 }
+						acc._locations[locationStrIds].areas.push(acc._areas[areaStrIds])
+					}
 				}
 			}
-		}
 
-		// 3. Extract 'workTypes'
-		if (ad.workType && ad.workType.id) {
-			var workTypeIds = _getCategoryId(ad.workType.id, categories)
-			var workTypeName = categories[ad.workType.id] || ad.workType.name
-			var workTypeStrIds = workTypeIds.join('_')
-			if (acc._workTypes[workTypeStrIds])
-				acc._workTypes[workTypeStrIds].count++
-			else {
-				acc._workTypes[workTypeStrIds] = { id:workTypeIds, name:workTypeName, count:1, roles:[] }
-				acc.menu.workTypes.push(acc._workTypes[workTypeStrIds])
+			// 3. Extract 'workTypes'
+			if (ad.workType && ad.workType.id) {
+				var workTypeIds = _getCategoryId(ad.workType.id, categories)
+				var workTypeName = categories[ad.workType.id] || ad.workType.name
+				var workTypeStrIds = workTypeIds.join('_')
+				if (acc._workTypes[workTypeStrIds])
+					acc._workTypes[workTypeStrIds].count++
+				else {
+					acc._workTypes[workTypeStrIds] = { id:workTypeIds, name:workTypeName, count:1, roles:[] }
+					acc.menu.workTypes.push(acc._workTypes[workTypeStrIds])
+				}
 			}
-		}
 
-		// 4. Extract 'salaryTypes'
-		ad.salary = ad.salary || {}
-		if (ad.salary.per == 'Year' && !acc._salaryTypes.year){
-			acc._salaryTypes.year = true
-			acc.menu.salaryTypes.push({ id: ANNUALY_ID, name: 'Annual Salary' })
-		}
-		if (ad.salary.per == 'Hour' && !acc._salaryTypes.hour){
-			acc._salaryTypes.hour = true
-			acc.menu.salaryTypes.push({ id: HOURLY_ID, name: 'Hourly Rate' })
-		}
-		if (ad.salary.per == 'Month' && !acc._salaryTypes.month){
-			acc._salaryTypes.month = true
-			acc.menu.salaryTypes.push({ id: MONTHLY_ID, name: 'Monthly Salary' })
-		}
-		if (ad.salary.per == 'Day' && !acc._salaryTypes.day){
-			acc._salaryTypes.day = true
-			acc.menu.salaryTypes.push({ id: DAILY_ID, name: 'Daily Rate' })
-		}
-
-		// 5. Extract 'consultants'
-		if (ad.owner && ad.owner.id) {
-			var consultantIds = _getCategoryId(ad.owner.id, categories)
-			var consultantName = categories[ad.owner.id] || ad.owner.fullName
-			var consultantStrIds = consultantIds.join('_')
-			if (acc._consultants[consultantStrIds])
-				acc._consultants[consultantStrIds].count++
-			else {
-				acc._consultants[consultantStrIds] = { id:consultantIds, name:consultantName, count:1, roles:[] }
-				acc.menu.consultants.push(acc._consultants[consultantStrIds])
+			// 4. Extract 'salaryTypes'
+			ad.salary = ad.salary || {}
+			if (ad.salary.per == 'Year' && !acc._salaryTypes.year){
+				acc._salaryTypes.year = true
+				acc.menu.salaryTypes.push({ id: ANNUALY_ID, name: 'Annual Salary' })
 			}
-		}
+			if (ad.salary.per == 'Hour' && !acc._salaryTypes.hour){
+				acc._salaryTypes.hour = true
+				acc.menu.salaryTypes.push({ id: HOURLY_ID, name: 'Hourly Rate' })
+			}
+			if (ad.salary.per == 'Month' && !acc._salaryTypes.month){
+				acc._salaryTypes.month = true
+				acc.menu.salaryTypes.push({ id: MONTHLY_ID, name: 'Monthly Salary' })
+			}
+			if (ad.salary.per == 'Day' && !acc._salaryTypes.day){
+				acc._salaryTypes.day = true
+				acc.menu.salaryTypes.push({ id: DAILY_ID, name: 'Daily Rate' })
+			}
 
-		return acc
+			// 5. Extract 'consultants'
+			if (ad.owner && ad.owner.id) {
+				var consultantIds = _getCategoryId(ad.owner.id, categories)
+				var consultantName = categories[ad.owner.id] || ad.owner.fullName
+				var consultantStrIds = consultantIds.join('_')
+				if (acc._consultants[consultantStrIds])
+					acc._consultants[consultantStrIds].count++
+				else {
+					acc._consultants[consultantStrIds] = { id:consultantIds, name:consultantName, count:1, roles:[] }
+					acc.menu.consultants.push(acc._consultants[consultantStrIds])
+				}
+			}
+
+			return acc
+		} catch(e) {
+			console.log(`${e.message}\n${e.stack}`)
+			throw e
+		}
 	}, { menu: { professions:[], locations:[], workTypes:[], salaryTypes:[], consultants:[] }, _salaryTypes:{}, _professions:{}, _locations:{}, _workTypes:{}, _roles:{}, _areas:{}, _consultants:{} })
 
 	var menu = data.menu
@@ -175,8 +180,33 @@ function _formatMoney(number) {
 function _escapeJobCategoriesName(name){
 	return encodeURIComponent((name || '').toLowerCase().trim().replace(/^\s+|\s+$/g, '').replace(/&/g, 'and').replace(/[^a-zA-Z0-9]/g, '-').replace(/(-)\1+/, '-'))
 }
-
-function _fetchJobAds({ clientId, categories, mode, ownerId, ownerEmail }) {
+	
+/**
+ * Gets a client's jobs.
+ * 
+ * @param  {String}   where.clientId		If 'mode' is equal to 'dev', this field is not required. 
+ * @param  {String}   where.ownerId			Recruiter's ID. 
+ * @param  {String}   where.ownerEmail		Recruiter's email. 
+ * @param  {String}   where.jobId			
+ * @param  {String}   where.professionId	
+ * @param  {String}   where.roleId			
+ * @param  {String}   where.locationId		
+ * @param  {String}   where.areaId			
+ * @param  {String}   where.workTypeId		
+ * @param  {String}   where.salary.per		
+ * @param  {Float}    where.salary.lowest	
+ * @param  {Float}    where.salary.highest	
+ * @param  {String}   options.mode			Default is 'prod'. Valid values: 'dev' and 'prod'
+ * @param  {Object}   options.categories	Renames and re-organizes the output categories (e.g., { 5843: 'Internet & Telco', 5821: 'Internet & Telco' } 
+ *                                       	would rename categories 5843 and 5821 to 'Internet & Telco', and because they have the same name, they are
+ *                                       	be grouped together.).
+ * @return {[JobAds]}               		[description]
+ */
+function _fetchJobAds({ where }, options) {
+	where = where || {}
+	options = options || {}
+	let { categories, mode } = options
+	let { clientId } = where
 	let jobApi
 	if (mode == 'dev') {
 		jobApi = JOB_API_TEST
@@ -265,6 +295,14 @@ function _fetchJobAds({ clientId, categories, mode, ownerId, ownerEmail }) {
 							}
 						}
 
+						// 6. Replace null arrays with empty arrays
+						ad.profession = ad.profession || { role:{} }
+						ad.profession.role = ad.profession.role || {}
+						ad.location = ad.location || { area:{} }
+						ad.location.area = ad.location.area || {}
+						ad.workType = ad.workType || {}
+						ad.consultant = ad.consultant || {}
+
 						return ad
 					}).reverse()
 					onSuccess({ status: xmlhttp.status, data: ads })
@@ -274,10 +312,24 @@ function _fetchJobAds({ clientId, categories, mode, ownerId, ownerEmail }) {
 		}
 
 		const whereClause = [`clientId: "${clientId}"`]
-		if (ownerId)
-			whereClause.push(`ownerId: "${ownerId}"`)
-		if (ownerEmail)
-			whereClause.push(`ownerEmail: "${ownerEmail}"`)
+		if (where.ownerId)
+			whereClause.push(`ownerId: "${where.ownerId}"`)
+		if (where.ownerEmail)
+			whereClause.push(`ownerEmail: "${where.ownerEmail}"`)
+		if (where.jobId)
+			whereClause.push(`jobId: "${where.jobId}"`)
+		if (where.professionId)
+			whereClause.push(`professionId: "${where.professionId}"`)
+		if (where.roleId)
+			whereClause.push(`roleId: "${where.roleId}"`)
+		if (where.locationId)
+			whereClause.push(`locationId: "${where.locationId}"`)
+		if (where.areaId)
+			whereClause.push(`areaId: "${where.areaId}"`)
+		if (where.workTypeId)
+			whereClause.push(`workTypeId: "${where.workTypeId}"`)
+		if (where.salary && where.salary.per && where.salary.lowest && where.salary.highest)
+			whereClause.push(`salary: { per: ${where.salary.per} lowest: ${where.salary.lowest} highest: ${where.salary.highest} }`)
 
 		var api_url = jobApi + '?query=' + encodeURIComponent('{ \n' + 
 			`jobAds(where:{${whereClause.join(', ')}}) { \n` +
@@ -333,24 +385,45 @@ const _mapJobAds = data => (data || []).map(ad => {
 	return ad
 })
 
-function _getJobAds(options) { 
+/**
+ * Gets a client's jobs with retry mechanism.
+ * 
+ * @param  {String}   where.clientId		If 'mode' is equal to 'dev', this field is not required. 
+ * @param  {String}   where.ownerId			Recruiter's ID. 
+ * @param  {String}   where.ownerEmail		Recruiter's email. 
+ * @param  {String}   where.jobId			
+ * @param  {String}   where.professionId	
+ * @param  {String}   where.roleId			
+ * @param  {String}   where.locationId		
+ * @param  {String}   where.areaId			
+ * @param  {String}   where.workTypeId		
+ * @param  {String}   where.salary.per		
+ * @param  {Float}    where.salary.lowest	
+ * @param  {Float}    where.salary.highest	
+ * @param  {String}   options.mode			Default is 'prod'. Valid values: 'dev' and 'prod'
+ * @param  {Object}   options.categories	Renames and re-organizes the output categories (e.g., { 5843: 'Internet & Telco', 5821: 'Internet & Telco' } 
+ *                                       	would rename categories 5843 and 5821 to 'Internet & Telco', and because they have the same name, they are
+ *                                       	be grouped together.).
+ * @return {[JobAds]}               		[description]
+ */
+function _getJobAds({ where={} }, options={}) { 
 	options = options || {}
-	return _fetchJobAds(options).then(function(res){ return _mapJobAds(res.data) })
+	return _fetchJobAds({ where }, options).then(function(res){ return _mapJobAds(res.data) })
 	// retry attempt 1
 		.catch(function(err1){
 			console.log('Error while fetching jobs from the server (1st attempt): ' + err1.status + ' - ' + err1.message)
 			return  _delay(1000).then(function(){
-				return _fetchJobAds(options).then(function(res){return _mapJobAds(res.data)})
+				return _fetchJobAds({ where }, options).then(function(res){return _mapJobAds(res.data)})
 				// retry attempt 2
 					.catch(function(err2){
 						console.log('Error while fetching jobs from the server (2nd attempt): ' + err2.status + ' - ' + err2.message)
 						return  _delay(2000).then(function(){
-							return _fetchJobAds(options).then(function(res){return _mapJobAds(res.data)})
+							return _fetchJobAds({ where }, options).then(function(res){return _mapJobAds(res.data)})
 							// retry attempt 2
 								.catch(function(err3){
 									console.log('Error while fetching jobs from the server (3rd attempt): ' + err3.status + ' - ' + err3.message)
 									return  _delay(3000).then(function(){
-										return _fetchJobAds(options).then(function(res){return _mapJobAds(res.data)}).catch(function(){return []})
+										return _fetchJobAds({ where }, options).then(function(res){return _mapJobAds(res.data)}).catch(function(){return []})
 									})
 								})
 						})
@@ -1013,12 +1086,28 @@ Vue.component('job-search-header', {
 /**
  * Creates a Fairplay widget and attaches it under the DOM identified by ''. 
  * 
- * @param  {String} options.el				DOM under which the Fairplay widget is immediately attached (e.g., '#main'). 
- * @param  {String} options.clientId		Required in when 'mode' is not equal to 'dev'. 
- * @param  {String} options.mode			Default null. Valid value: 'dev'. If set to 'dev', the test API is used and the 'clientId' is not required.
- * @param  {Number} options.pageSize
- * @param  {Number} options.filter			e.g., { classification: { toggled:true, name:'Profession' }, salary: { toggled:false }, consultant: { toggled:false, value:'nic@neap.co' } }				
- * @param  {Object} options.categories		e.g., { 5843: 'Internet & Telco', 5821: 'Internet & Telco' }
+ * @param  {String}  options.el									DOM under which the Fairplay widget is immediately attached (e.g., '#main'). 
+ * @param  {String}  options.clientId							Required in when 'mode' is not equal to 'dev'. 
+ * @param  {String}  options.mode								Default null. Valid value: 'dev'. If set to 'dev', the test API is used and the 'clientId' is not required.
+ * @param  {Number}  options.pageSize				
+ * @param  {Object}  options.categories							e.g., { 5843: 'Internet & Telco', 5821: 'Internet & Telco' }
+ * @param  {Boolean} options.filter.toggled						Default is true.					
+ * @param  {Boolean} options.filter.searchCountToggled			Default is true.
+ * @param  {String}  options.filter.classification.name			
+ * @param  {Boolean} options.filter.classification.toggled		Default is true.	
+ * @param  {String}  options.filter.subClassification.name		
+ * @param  {Boolean} options.filter.subClassification.toggled	Default is true.
+ * @param  {String}  options.filter.location.name				
+ * @param  {Boolean} options.filter.location.toggled			Default is true.		
+ * @param  {String}  options.filter.area.name					
+ * @param  {Boolean} options.filter.area.toggled				Default is true.			
+ * @param  {String}  options.filter.workType.name				
+ * @param  {Boolean} options.filter.workType.toggled			Default is true.		
+ * @param  {String}  options.filter.consultant.name				
+ * @param  {Boolean} options.filter.consultant.toggled			Default is true.		
+ * @param  {St}ring  options.filter.consultant.value			
+ * @param  {String}  options.filter.salary.name					
+ * @param  {Boolean} options.filter.salary.toggled				Default is true.			
  * @return {Void}        
  */
 var fairplay = function(options) {
@@ -1044,60 +1133,65 @@ var fairplay = function(options) {
 			var vm = this
 
 			var filterJobAds = function() {
-				var queryFilter = _getQueryStringFilters() || {}
-				var filters = queryFilter.filters || []
-				var page = queryFilter.page 
+				try {
+					var queryFilter = _getQueryStringFilters() || {}
+					var filters = queryFilter.filters || []
+					var page = queryFilter.page 
 
-				var filteredJobAds = vm.allJobAds.map(_idFn)
-				filters.forEach(function(filter) {
-					var filterIds = (filter.id || []).reduce(function(acc,id){
-						acc[id] = true
-						return acc 
-					}, {})
-					if (filter.type == 'professions') 
-						filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.profession && filterIds[jobAd.profession.id] })
-					else if (filter.type == 'roles')
-						filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.profession && jobAd.profession.role && filterIds[jobAd.profession.role.id] })
-					else if (filter.type == 'locations')
-						filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.location && filterIds[jobAd.location.id] })
-					else if (filter.type == 'areas')
-						filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.location && jobAd.location.area && filterIds[jobAd.location.area.id] })
-					else if (filter.type == 'workTypes')
-						filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.workType && filterIds[jobAd.workType.id] })
-					else if (filter.type == 'consultants') 
-						filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.owner && filterIds[jobAd.owner.id] })
-					else if (filter.type == 'salary') {				
-						filteredJobAds = filteredJobAds.filter(function(jobAd) { 
-							return jobAd.salary 
-								&& jobAd.salary.id == filter.salaryTypeId 
-								&& ((jobAd.salary.lower <= filter.lower && filter.lower <= jobAd.salary.upper) 
-									|| (jobAd.salary.lower <= filter.upper && filter.upper <= jobAd.salary.upper)
-									|| (filter.lower <= jobAd.salary.lower && jobAd.salary.lower <= filter.upper)
-									|| (filter.lower <= jobAd.salary.upper && jobAd.salary.upper <= filter.upper))
-						})
-					}
-					else if (filter.type == 'keywords' && filter.name) {
-						var k = filter.name.toLowerCase().trim()
-						filteredJobAds = filteredJobAds.filter(function(jobAd) { 
-							return jobAd.title && jobAd.title.toLowerCase().indexOf(k) >= 0 
-								|| jobAd.profession && jobAd.profession.name && jobAd.profession.name.toLowerCase().indexOf(k) >= 0
-								|| jobAd.profession && jobAd.profession.role && jobAd.profession.role.name && jobAd.profession.role.name.toLowerCase().indexOf(k) >= 0
-								|| jobAd.location && jobAd.location.name && jobAd.location.name.toLowerCase().indexOf(k) >= 0
-								|| jobAd.location && jobAd.location.area && jobAd.location.area.name && jobAd.location.area.name.toLowerCase().indexOf(k) >= 0
-								|| jobAd.workType && jobAd.workType.name && jobAd.workType.name.toLowerCase().indexOf(k) >= 0
-								|| jobAd.owner && jobAd.owner.fullName && jobAd.owner.fullName.toLowerCase().indexOf(k) >= 0
-								|| jobAd.summary && jobAd.summary.toLowerCase().indexOf(k) >= 0
-						})
-					}
-				})
+					var filteredJobAds = vm.allJobAds.map(_idFn)
+					filters.forEach(function(filter) {
+						var filterIds = (filter.id || []).reduce(function(acc,id){
+							acc[id] = true
+							return acc 
+						}, {})
+						if (filter.type == 'professions') 
+							filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.profession && filterIds[jobAd.profession.id] })
+						else if (filter.type == 'roles')
+							filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.profession && jobAd.profession.role && filterIds[jobAd.profession.role.id] })
+						else if (filter.type == 'locations')
+							filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.location && filterIds[jobAd.location.id] })
+						else if (filter.type == 'areas')
+							filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.location && jobAd.location.area && filterIds[jobAd.location.area.id] })
+						else if (filter.type == 'workTypes')
+							filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.workType && filterIds[jobAd.workType.id] })
+						else if (filter.type == 'consultants') 
+							filteredJobAds = filteredJobAds.filter(function(jobAd) { return jobAd.owner && filterIds[jobAd.owner.id] })
+						else if (filter.type == 'salary') {				
+							filteredJobAds = filteredJobAds.filter(function(jobAd) { 
+								return jobAd.salary 
+									&& jobAd.salary.id == filter.salaryTypeId 
+									&& ((jobAd.salary.lower <= filter.lower && filter.lower <= jobAd.salary.upper) 
+										|| (jobAd.salary.lower <= filter.upper && filter.upper <= jobAd.salary.upper)
+										|| (filter.lower <= jobAd.salary.lower && jobAd.salary.lower <= filter.upper)
+										|| (filter.lower <= jobAd.salary.upper && jobAd.salary.upper <= filter.upper))
+							})
+						}
+						else if (filter.type == 'keywords' && filter.name) {
+							var k = filter.name.toLowerCase().trim()
+							filteredJobAds = filteredJobAds.filter(function(jobAd) { 
+								return jobAd.title && jobAd.title.toLowerCase().indexOf(k) >= 0 
+									|| jobAd.profession && jobAd.profession.name && jobAd.profession.name.toLowerCase().indexOf(k) >= 0
+									|| jobAd.profession && jobAd.profession.role && jobAd.profession.role.name && jobAd.profession.role.name.toLowerCase().indexOf(k) >= 0
+									|| jobAd.location && jobAd.location.name && jobAd.location.name.toLowerCase().indexOf(k) >= 0
+									|| jobAd.location && jobAd.location.area && jobAd.location.area.name && jobAd.location.area.name.toLowerCase().indexOf(k) >= 0
+									|| jobAd.workType && jobAd.workType.name && jobAd.workType.name.toLowerCase().indexOf(k) >= 0
+									|| jobAd.owner && jobAd.owner.fullName && jobAd.owner.fullName.toLowerCase().indexOf(k) >= 0
+									|| jobAd.summary && jobAd.summary.toLowerCase().indexOf(k) >= 0
+							})
+						}
+					})
 
-				vm.allFilteredJobAds = filteredJobAds
-				vm.jobads = filteredJobAds.slice((page-1)*pageSize, page*pageSize)
+					vm.allFilteredJobAds = filteredJobAds
+					vm.jobads = filteredJobAds.slice((page-1)*pageSize, page*pageSize)
 
-				_eventBus.$emit('job-search-header.update', filteredJobAds, page)
-				_eventBus.$emit('page-buttons.update', filteredJobAds, page, options)
-				_eventBus.$emit('left-menu.update', filteredJobAds, options)
-				_eventBus.$emit('neap-widget.hide-menu')
+					_eventBus.$emit('job-search-header.update', filteredJobAds, page)
+					_eventBus.$emit('page-buttons.update', filteredJobAds, page, options)
+					_eventBus.$emit('left-menu.update', filteredJobAds, options)
+					_eventBus.$emit('neap-widget.hide-menu')
+				} catch(e) {
+					console.log(`${e.message}\n${e.stack}`)
+					throw e
+				}
 			}
 
 			_eventBus.$on('pageChange', function(pos) {
@@ -1177,7 +1271,9 @@ var fairplay = function(options) {
 					options.ownerEmail = consultantId
 			}
 
-			_getJobAds(options).then(function(jobs) {
+			const { clientId, ownerId, ownerEmail } = options || {}
+
+			_getJobAds({ where: { clientId, ownerId, ownerEmail } }, options).then(function(jobs) {
 				vm.allJobAds = jobs
 				vm.allFilteredJobAds = jobs
 				var queryFilter = _getQueryStringFilters() || {}
@@ -1187,6 +1283,40 @@ var fairplay = function(options) {
 	})
 }
 
+const Fairplay = function({ clientId, mode='prod' }) {
+	if (mode != 'prod' && mode != 'dev')
+		throw new Error('Invalid argument \'mode\'. If \'mode\' is set, it must be equal to \'dev\' or \'prod\'.')
+
+	if (mode == 'prod' && !clientId)
+		throw new Error('Missing required argument \'clientId\'. In production mode (mode = \'prod\' or mode not set), \'clientId\' is required.')
+
+	this.createWidget = (options) => {
+		options = options || {}
+		options.clientId = clientId
+		options.mode = mode
+		fairplay(options)
+	}
+
+	this.getJobAds = (query, next) => {
+		let where = (query || {}).where || {}
+		where.clientId = clientId
+		const options = { mode }
+		return _getJobAds({ where }, options).then(data => {
+			if (next)
+				next(null, data)
+			return data 
+		}).catch(err => {
+			if (next)
+				next(err,null)
+			else
+				throw err 
+		})
+	}
+
+	return this
+}
+
+module.exports.Fairplay = Fairplay
 module.exports.fairplay = fairplay
 
 
