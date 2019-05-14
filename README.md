@@ -46,8 +46,76 @@ You can access that JS and the default CSS using a specific version as follow:
 * [https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.0.13/dist/fairplay.min.js](https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.0.13/dist/fairplay.min.js)
 * [https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.0.13/dist/fairplay.min.css](https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.0.13/dist/fairplay.min.css)
 
+# API - Fairplay Object
+
+To create a Fairplay object, make sure you have your `clientId` (unless you're using the SDK in `dev` mode):
+
+```js
+var fp = new Fairplay({ clientId:'123456789' });
+```
+
+## `getJobAds({ where:<Where> }, next:<Function>)`
+
+### JobAd Object
+
+```js
+{
+    "id": "1265",
+    "title": "Junior IT specialist for Hospital systems",
+    "summary": "Looking for Junior IT specialist for Hospital systems to help supporting all IT systems in the hospital.",
+    "bulletPoints": [
+        "Advantageous package",
+        "Flexible holidays"
+    ],
+    "created": "2018-12-20T03:22:19Z",
+    "owner": null,
+    "profession":
+    {
+        "id": "5843",
+        "name": "IT",
+        "role":
+        {
+            "id": "6286",
+            "name": "Helpdesk & Support",
+            "link": "?professions=IT-5843&roles=Helpdesk%20%26%20Support-6286"
+        },
+        "link": "?professions=IT-5843"
+    },
+    "location":
+    {
+        "id": "6628",
+        "name": "Sydney",
+        "area":
+        {
+            "id": "6654",
+            "name": "North West & Hills District"
+        }
+    },
+    "workType":
+    {
+        "id": "5815",
+        "name": "Full Time"
+    },
+    "salary":
+    {
+        "per": "Hour",
+        "lowest": 40,
+        "highest": 50,
+        "lower": 40,
+        "upper": 50,
+        "id": 4,
+        "description": "$40 - $50 per hour"
+    },
+    "date": "20/12/2018",
+    "link": "/jobs/it/junior-it-specialist-for-hospital-systems/1265",
+    "consultant": {
+
+    }
+}
+```
+
 # How To
-## How To Use Me
+## How to dev?
 
 Simply run this:
 
