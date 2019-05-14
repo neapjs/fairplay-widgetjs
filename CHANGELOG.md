@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.1.1"></a>
+## [0.1.1](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.1.0...v0.1.1) (2019-05-14)
+
+
+### Features
+
+* Add support for using GraphQL syntax to retrieve specific fields instead of everything ([828d2e0](https://gitlab.com/neap/fairplay-widgetjs/commit/828d2e0))
+
+
+
 <a name="0.1.0"></a>
 # [0.1.0](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.0.16...v0.1.0) (2019-05-14)
 
