@@ -1,17 +1,18 @@
+import { fetch } from './utils/index.js'
 
-var JOB_AD_URL = '/jobs'
-var JOB_API_TEST = 'https://api-test-dot-fp-recruit-vquqd.appspot.com'
-var JOB_API_PROD = 'https://api-dot-fp-recruit-vquqd.appspot.com'
-var CLIENT_ID_TEST = '9s7vo-iiu99-b4w7s-5rxr4'
-var DEFAULT_PAGE_SIZE = 10
-var ANNUALY_ID = 1
-var MONTHLY_ID = 2
-var DAILY_ID = 3
-var HOURLY_ID = 4
+const JOB_AD_URL = '/jobs'
+const JOB_API_TEST = 'https://api-test-dot-fp-recruit-vquqd.appspot.com'
+const JOB_API_PROD = 'https://api-dot-fp-recruit-vquqd.appspot.com'
+const CLIENT_ID_TEST = '9s7vo-iiu99-b4w7s-5rxr4'
+const DEFAULT_PAGE_SIZE = 10
+const ANNUALY_ID = 1
+const MONTHLY_ID = 2
+const DAILY_ID = 3
+const HOURLY_ID = 4
 
-var _eventBus = new Vue({})
+const _eventBus = new Vue({})
 
-function _idFn(x) { return x }
+const _idFn = x => x
 
 function _delay(time) {
 	return new Promise(function (onSuccess) {
@@ -200,7 +201,9 @@ function _escapeJobCategoriesName(name){
  * @param  {Object}   options.categories	Renames and re-organizes the output categories (e.g., { 5843: 'Internet & Telco', 5821: 'Internet & Telco' } 
  *                                       	would rename categories 5843 and 5821 to 'Internet & Telco', and because they have the same name, they are
  *                                       	be grouped together.).
- * @return {[JobAds]}               		[description]
+ * @param  {String}   options.fields		GraphQL fields (e.g., 'id, title, profession { id }')
+ * @return {Number}   output.status
+ * @return {[JobAds]} output.data         
  */
 function _fetchJobAds({ where }, options) {
 	where = where || {}
@@ -219,163 +222,156 @@ function _fetchJobAds({ where }, options) {
 
 	categories = categories || {}
 
-	return new Promise(function(onSuccess, onFailure) {
-		var xmlhttp = new XMLHttpRequest()
+	// 1. Build the GraphQL query
+	const whereClause = [`clientId: "${clientId}"`]
+	if (where.ownerId)
+		whereClause.push(`ownerId: "${where.ownerId}"`)
+	if (where.ownerEmail)
+		whereClause.push(`ownerEmail: "${where.ownerEmail}"`)
+	if (where.jobId)
+		whereClause.push(`jobId: "${where.jobId}"`)
+	if (where.professionId)
+		whereClause.push(`professionId: "${where.professionId}"`)
+	if (where.roleId)
+		whereClause.push(`roleId: "${where.roleId}"`)
+	if (where.locationId)
+		whereClause.push(`locationId: "${where.locationId}"`)
+	if (where.areaId)
+		whereClause.push(`areaId: "${where.areaId}"`)
+	if (where.workTypeId)
+		whereClause.push(`workTypeId: "${where.workTypeId}"`)
+	if (where.salary && where.salary.per && where.salary.lowest && where.salary.highest)
+		whereClause.push(`salary: { per: ${where.salary.per} lowest: ${where.salary.lowest} highest: ${where.salary.highest} }`)
 
-		xmlhttp.onreadystatechange = function() {
-			if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
-				if (xmlhttp.status < 400) {
-					var data = JSON.parse(xmlhttp.responseText) || {}
-					var ads = (((data.data || {}).jobAds || {}).data || []).map(function(ad){
-						// 1. Format salary
-						var money = []	
-						var paidFreq = ''
-						ad.salary = ad.salary || {}
-						var lower = (ad.salary.lowest || 0) * 1 
-						var upper = (ad.salary.highest || 0) * 1
-						ad.salary.lower = lower
-						ad.salary.upper = upper
-						if (ad.salary.per == 'Year') {
-							paidFreq = 'per annum'
-							ad.salary.id = ANNUALY_ID
-						} else if (ad.salary.per == 'Hour') {
-							paidFreq = 'per hour'
-							ad.salary.id = HOURLY_ID
-						} else if (ad.salary.per == 'Day') {
-							paidFreq = 'per day'
-							ad.salary.id = DAILY_ID
-						} else if (ad.salary.per == 'Month') {
-							paidFreq = 'per month'
-							ad.salary.id = MONTHLY_ID
-						}
+	const fields = options.fields || `
+				id
+				title
+				summary
+				bulletPoints
+				created
+				owner {
+					id
+					firstName
+					lastName
+					email
+				}
+				profession{
+					id
+					name
+					role{
+						id
+						name
+					}
+				}
+				location{
+					id
+					name
+					area{
+						id
+						name
+					}
+				}
+				workType{
+					id
+					name
+				}
+				salary {
+					per
+					lowest
+					highest
+				}`
 
-						if (lower > 0 || upper > 0) {
-							if (lower > 0)
-								money.push(_formatMoney(lower))
-							if (upper > 0)
-								money.push(_formatMoney(upper))
-
-							ad.salary.description = money.join(' - ') + ' ' + paidFreq
-						} else
-							ad.salary.description = ''
-
-						// 2. Add new 'date' property and format it:
-						ad.date = new Date(ad.created).toJSON().slice(0,10).split('-').reverse().join('/')
-
-						// 3. Apply custom category mappings:
-						if (ad.profession && ad.profession.id && categories[ad.profession.id])
-							ad.profession.name = categories[ad.profession.id]
-						if (ad.profession && ad.profession.role && ad.profession.role.id && categories[ad.profession.role.id])
-							ad.profession.role.name = categories[ad.profession.role.id]
-						if (ad.location && ad.location.id && categories[ad.location.id])
-							ad.location.name = categories[ad.location.id]
-						if (ad.location && ad.location.area && ad.location.area.id && categories[ad.location.area.id])
-							ad.location.area.name = categories[ad.location.area.id]
-						if (ad.workType && ad.workType.id && categories[ad.workType.id])
-							ad.workType.name = categories[ad.workType.id]
-						if (ad.consultant && ad.consultant.id && categories[ad.consultant.id])
-							ad.consultant.name = categories[ad.consultant.id]
-
-						// 4. Create a job ad link:
-						var pathname = []
-						if (ad.profession && ad.profession.name)
-							pathname.push(_escapeJobCategoriesName(ad.profession.name))
-						if (ad.title)
-							pathname.push(_escapeJobCategoriesName(ad.title))
-						pathname.push(ad.id)
-						ad.link = JOB_AD_URL + '/' + pathname.join('/')
-
-						// 5. Create a profession search link:
-						if (ad.profession && ad.profession.id && ad.profession.name) {
-							var proIds = _getCategoryId(ad.profession.id, categories)
-							ad.profession.link = '?professions=' + encodeURIComponent(ad.profession.name) + '-' + proIds.join('_')
-							if (ad.profession.role && ad.profession.role.id && ad.profession.role.name) {
-								var roleIds = _getCategoryId(ad.profession.role.id, categories)
-								ad.profession.role.link = ad.profession.link + '&roles=' + encodeURIComponent(ad.profession.role.name) + '-' + roleIds.join('_')
-							}
-						}
-
-						// 6. Replace null arrays with empty arrays
-						ad.profession = ad.profession || { role:{} }
-						ad.profession.role = ad.profession.role || {}
-						ad.location = ad.location || { area:{} }
-						ad.location.area = ad.location.area || {}
-						ad.workType = ad.workType || {}
-						ad.consultant = ad.consultant || {}
-
-						return ad
-					}).reverse()
-					onSuccess({ status: xmlhttp.status, data: ads })
-				} else
-					onFailure({ status: xmlhttp.status, message: xmlhttp.responseText })
+	const api_url = jobApi + '?query=' + encodeURIComponent(`{ 
+		jobAds(where:{${whereClause.join(', ')}}) { 
+			data {
+				${fields}
 			}
 		}
+	}`)
 
-		const whereClause = [`clientId: "${clientId}"`]
-		if (where.ownerId)
-			whereClause.push(`ownerId: "${where.ownerId}"`)
-		if (where.ownerEmail)
-			whereClause.push(`ownerEmail: "${where.ownerEmail}"`)
-		if (where.jobId)
-			whereClause.push(`jobId: "${where.jobId}"`)
-		if (where.professionId)
-			whereClause.push(`professionId: "${where.professionId}"`)
-		if (where.roleId)
-			whereClause.push(`roleId: "${where.roleId}"`)
-		if (where.locationId)
-			whereClause.push(`locationId: "${where.locationId}"`)
-		if (where.areaId)
-			whereClause.push(`areaId: "${where.areaId}"`)
-		if (where.workTypeId)
-			whereClause.push(`workTypeId: "${where.workTypeId}"`)
-		if (where.salary && where.salary.per && where.salary.lowest && where.salary.highest)
-			whereClause.push(`salary: { per: ${where.salary.per} lowest: ${where.salary.lowest} highest: ${where.salary.highest} }`)
 
-		var api_url = jobApi + '?query=' + encodeURIComponent('{ \n' + 
-			`jobAds(where:{${whereClause.join(', ')}}) { \n` +
-				'data{ \n' +
-					'id \n' +
-					'title \n' +
-					'summary \n' +
-					'bulletPoints \n' +
-					'created \n' +
-					'owner { \n' +
-						'id \n' +
-						'firstName \n' +
-						'lastName \n' +
-						'email \n' +
-					'} \n' +
-					'profession{ \n' +
-						'id \n' +
-						'name \n' +
-						'role{ \n' +
-							'id \n' +
-							'name \n' +
-						'} \n' +
-					'} \n' +
-					'location{ \n' +
-						'id \n' +
-						'name \n' +
-						'area{ \n' +
-							'id \n' +
-							'name \n' +
-						'} \n' +
-					'} \n' +
-					'workType{ \n' +
-						'id \n' +
-						'name \n' +
-					'} \n' +
-					'salary { \n' +
-						'per \n' +
-						'lowest \n' +
-						'highest \n' +
-					'} \n' +
-				'} \n' +
-			'} \n' +
-		'}')
+	return fetch.get({ uri:api_url }).then(({ status, data }) => {
+		var ads = (((data.data || {}).jobAds || {}).data || []).map(function(ad) {
+			// 1. Format salary
+			var money = []	
+			var paidFreq = ''
+			ad.salary = ad.salary || {}
+			var lower = (ad.salary.lowest || 0) * 1 
+			var upper = (ad.salary.highest || 0) * 1
+			ad.salary.lower = lower
+			ad.salary.upper = upper
+			if (ad.salary.per == 'Year') {
+				paidFreq = 'per annum'
+				ad.salary.id = ANNUALY_ID
+			} else if (ad.salary.per == 'Hour') {
+				paidFreq = 'per hour'
+				ad.salary.id = HOURLY_ID
+			} else if (ad.salary.per == 'Day') {
+				paidFreq = 'per day'
+				ad.salary.id = DAILY_ID
+			} else if (ad.salary.per == 'Month') {
+				paidFreq = 'per month'
+				ad.salary.id = MONTHLY_ID
+			}
 
-		xmlhttp.open('GET', api_url, true)
-		xmlhttp.send()
+			if (lower > 0 || upper > 0) {
+				if (lower > 0)
+					money.push(_formatMoney(lower))
+				if (upper > 0)
+					money.push(_formatMoney(upper))
+
+				ad.salary.description = money.join(' - ') + ' ' + paidFreq
+			} else
+				ad.salary.description = ''
+
+			// 2. Add new 'date' property and format it:
+			ad.date = ad.created ? new Date(ad.created).toJSON().slice(0,10).split('-').reverse().join('/') : ''
+
+			// 3. Apply custom category mappings:
+			if (ad.profession && ad.profession.id && categories[ad.profession.id])
+				ad.profession.name = categories[ad.profession.id]
+			if (ad.profession && ad.profession.role && ad.profession.role.id && categories[ad.profession.role.id])
+				ad.profession.role.name = categories[ad.profession.role.id]
+			if (ad.location && ad.location.id && categories[ad.location.id])
+				ad.location.name = categories[ad.location.id]
+			if (ad.location && ad.location.area && ad.location.area.id && categories[ad.location.area.id])
+				ad.location.area.name = categories[ad.location.area.id]
+			if (ad.workType && ad.workType.id && categories[ad.workType.id])
+				ad.workType.name = categories[ad.workType.id]
+			if (ad.consultant && ad.consultant.id && categories[ad.consultant.id])
+				ad.consultant.name = categories[ad.consultant.id]
+
+			// 4. Create a job ad link:
+			var pathname = []
+			if (ad.profession && ad.profession.name)
+				pathname.push(_escapeJobCategoriesName(ad.profession.name))
+			if (ad.title)
+				pathname.push(_escapeJobCategoriesName(ad.title))
+			pathname.push(ad.id)
+			ad.link = JOB_AD_URL + '/' + pathname.join('/')
+
+			// 5. Create a profession search link:
+			if (ad.profession && ad.profession.id && ad.profession.name) {
+				var proIds = _getCategoryId(ad.profession.id, categories)
+				ad.profession.link = '?professions=' + encodeURIComponent(ad.profession.name) + '-' + proIds.join('_')
+				if (ad.profession.role && ad.profession.role.id && ad.profession.role.name) {
+					var roleIds = _getCategoryId(ad.profession.role.id, categories)
+					ad.profession.role.link = ad.profession.link + '&roles=' + encodeURIComponent(ad.profession.role.name) + '-' + roleIds.join('_')
+				}
+			}
+
+			// 6. Replace null arrays with empty arrays
+			ad.profession = ad.profession || { role:{} }
+			ad.profession.role = ad.profession.role || {}
+			ad.location = ad.location || { area:{} }
+			ad.location.area = ad.location.area || {}
+			ad.workType = ad.workType || {}
+			ad.consultant = ad.consultant || {}
+
+			return ad
+		}).reverse()
+
+		return { status, data:ads }
 	})
 }
 
@@ -1298,9 +1294,10 @@ const Fairplay = function({ clientId, mode='prod' }) {
 	}
 
 	this.getJobAds = (query, next) => {
-		let where = (query || {}).where || {}
+		query = query || {}
+		let { where={}, fields } = query
 		where.clientId = clientId
-		const options = { mode }
+		const options = { mode, fields }
 		return _getJobAds({ where }, options).then(data => {
 			if (next)
 				next(null, data)
@@ -1316,7 +1313,9 @@ const Fairplay = function({ clientId, mode='prod' }) {
 	return this
 }
 
-module.exports.Fairplay = Fairplay
-module.exports.fairplay = fairplay
+export {
+	Fairplay,
+	fairplay
+}
 
 

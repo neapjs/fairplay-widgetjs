@@ -7,8 +7,8 @@
 </head>
 <body>
 	<div id="wrapper"></div>
-	<script src="/app.js"></script>
-	<script type="text/javascript">
+	<script type="module">
+		import { Fairplay } from './app.js'
 		const fp = new Fairplay({ 
 			//clientId:'1chfi-oqwg4-0ulzl-y36zv', 
 			mode:'dev' // Optional. When set to 'dev', the 'clientId' property is not required.
@@ -54,7 +54,7 @@
 			// 	}
 			// }
 		})
-		fp.getJobAds({ where:{ } }, (err,data) => { console.log(data) })
+		fp.getJobAds({ where:{ }, fields:'id profession { id }' }, (err,data) => { console.log(data) })
 		
 	</script>
 </body>
