@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.1.0"></a>
+# [0.1.0](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.0.16...v0.1.0) (2019-05-14)
+
+
+### Features
+
+* Add support for getting job ads data ([c2677d0](https://gitlab.com/neap/fairplay-widgetjs/commit/c2677d0))
+
+
+
 <a name="0.0.16"></a>
 ## [0.0.16](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.0.15...v0.0.16) (2019-05-10)
 
