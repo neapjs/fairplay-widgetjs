@@ -42,12 +42,13 @@
 
 # Where Am I Hosted?
 
-- JS: [https://unpkg.com/@neap/fairplay-widgetjs](https://unpkg.com/@neap/fairplay-widgetjs)
+Latest version:
+- JS: [https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs](https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs)
 - CSS: [https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs/dist/fairplay.min.css](https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs/dist/fairplay.min.css)
 
 You can access that JS and the default CSS using a specific version as follow:
-* [https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.0.13/dist/fairplay.min.js](https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.0.13/dist/fairplay.min.js)
-* [https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.0.13/dist/fairplay.min.css](https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.0.13/dist/fairplay.min.css)
+* [https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.2.1/dist/fairplay.min.js](https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.2.1/dist/fairplay.min.js)
+* [https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.2.1/dist/fairplay.min.css](https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.2.1/dist/fairplay.min.css)
 
 # API - Fairplay Object
 
@@ -156,13 +157,11 @@ This will produce multiple artefacts under the __dist__ folder.
 5. Bump to higher version: `npm run rls <the new version>`
 6. Publish: `npm run push`
 
-This will host the minified and unminified versions to [https://unpkg.com/@neap/fairplay-widgetjs](https://unpkg.com/@neap/fairplay-widgetjs).
+This will host the minified version to [https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs](https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs). The minified CSS is located at [https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.2.1/dist/fairplay.min.css](https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.2.1/dist/fairplay.min.css)
 
 You can access that JS and the default CSS using a specific version as follow:
-* [https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.js](https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.js)
-* [https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.min.js](https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.min.js)
-* [https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.css](https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.css)
-* [https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.min.css](https://unpkg.com/@neap/fairplay-widgetjs@0.0.10/dist/fairplay.min.css)
+* [https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.2.1/dist/fairplay.min.js](https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.2.1/dist/fairplay.min.js)
+* [https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.2.1/dist/fairplay.min.css](https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.2.1/dist/fairplay.min.css)
 
 # Annexes
 ## JobAdder - Neap Board Categories
