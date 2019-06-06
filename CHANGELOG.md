@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.2.0"></a>
+# [0.2.0](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.1.1...v0.2.0) (2019-06-06)
+
+
+### Features
+
+* Add support for job alerts ([241203d](https://gitlab.com/neap/fairplay-widgetjs/commit/241203d))
+
+
+
 <a name="0.1.1"></a>
 ## [0.1.1](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.1.0...v0.1.1) (2019-05-14)
 

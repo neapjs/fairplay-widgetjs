@@ -1,6 +1,6 @@
 {
   "name": "@neap/fairplay-widgetjs",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "JS Widget that powers job search",
   "main": "dist/fairplay.min.js",
   "unpkg": "dist/fairplay.min.js",
