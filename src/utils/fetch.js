@@ -97,7 +97,7 @@ const _fetchMethod = ({ uri, method, headers, body }) => new Promise((resolve,fa
 		const payload = (() => {
 			if (!body)
 				return
-			if (typeof(body) == 'string' || (body instanceof Buffer))
+			if (typeof(body) == 'string')
 				return body
 			
 			return JSON.stringify(body)

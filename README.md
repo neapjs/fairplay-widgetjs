@@ -1,10 +1,13 @@
 # Table of Contents
 
-> - [Getting Started](#getting-started)
-> - [Where Am I Hosted?](#where-am-i-hosted)
-> - [How To](#how-to)
-> - [Annexes](#annexes)
-> - [JobAdder - Neap Board Categories](#jobadder-neap-board-categories)
+> * [Getting Started](#getting-started)
+> * [Where Am I Hosted?](#where-am-i-hosted)
+> * [How To](#how-to)
+>   - [How To Test Locally](#how-to-test-locally)
+>   - [How To Compile The Code To ES5](#how-to-compile-the-code-to-es5)
+>   - [How To Deploy A New Version](#how-to-deploy-a-new-version)
+> * [Annexes](#annexes)
+> * [JobAdder - Neap Board Categories](#jobadder-neap-board-categories)
 
 # Getting Started
 
@@ -115,7 +118,7 @@ var fp = new Fairplay({ clientId:'123456789' });
 ```
 
 # How To
-## How to dev?
+## How To Test Locally?
 
 Simply run this:
 

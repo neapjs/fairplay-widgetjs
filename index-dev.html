@@ -3,23 +3,54 @@
 <head>
 	<title>View JS Test</title>
 	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jquery@2.2.4/dist/jquery.min.js"></script>
 	<link rel="stylesheet" href="/css/fairplay.css">
 </head>
 <body>
+	<form id="main-form">
+		<div>
+			<input type="text" name="firstName" placeholder="Enter your first name">
+		</div>
+		<div>
+			<input type="text" name="lastName" placeholder="Enter your last name">
+		</div>
+		<div>
+			<input type="email" name="email" placeholder="Enter your email">
+		</div>
+		<div>
+			<select name="offer">
+				<option>Submit Resume</option>
+				<option>Submit Vacancy</option>
+				<option>Job Alert</option>
+			</select>
+		</div>
+		<div>
+			<input type="file" name="Resume" placeholder="Attach resume">
+		</div>
+		<div>
+			<input type="checkbox" name="acceptTandCs">
+			<label>Accept terms and conditions</label>
+		</div>
+		<input type="submit" name="Submit">
+	</form>
 	<div id="wrapper"></div>
 	<script type="module">
 		import { Fairplay } from './app.js'
 		const fp = new Fairplay({ 
 			//clientId:'1chfi-oqwg4-0ulzl-y36zv', 
-			mode:'dev' // Optional. When set to 'dev', the 'clientId' property is not required.
+			mode: 'local', // Optional. When set to 'dev', the 'clientId' property is not required.
+			businessId: 32
 		})
+
+		// 1. Create the widget
 		fp.createWidget({
 			el: '#wrapper',
 			pageSize: 2,					// Optional. Default is 10. 
 			categories: { 					// Optional. This object overides the Neap's JobAdder's Board category names
 				5843: 'Internet & Telco', 
 				5821: 'Internet & Telco' 
-			}
+			},
+			jobAlert:false
 			// filter:{
 			// 	toggled: true,
 			// 	searchCountToggled: false,
@@ -54,8 +85,28 @@
 			// 	}
 			// }
 		})
+		
+		// 2. Get some data
 		fp.getJobAds({ where:{ }, fields:'id profession { id }' }, (err,data) => { console.log(data) })
 		
+		// 3. Capture a form submit and asynchronously submit the data
+		document.getElementById('main-form').addEventListener('submit', function(event) {
+			fp.submitForm(this,event, (error, res) => {
+				if (error) {
+					console.log('ERROR')
+					console.log(JSON.stringify(error))
+				} else {
+					console.log(`Status: ${res.status}`)
+					console.log(`Data: ${res.data}`)
+				}
+			})
+		})
+
+		// 4.
+		fp.on('job-alert-created', data => {
+			console.log(data)
+		})
+
 	</script>
 </body>
 </html>

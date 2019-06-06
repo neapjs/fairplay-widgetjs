@@ -12,7 +12,8 @@
         "Buffer": false,
         "__dirname": false,
         "Vue": false,
-        "fairplay": false
+        "fairplay": false,
+        "$": false
     },
     "parserOptions": {
         "sourceType": "module",

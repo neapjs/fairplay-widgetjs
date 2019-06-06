@@ -3,16 +3,70 @@ import { fetch } from './utils/index.js'
 const JOB_AD_URL = '/jobs'
 const JOB_API_TEST = 'https://api-test-dot-fp-recruit-vquqd.appspot.com'
 const JOB_API_PROD = 'https://api-dot-fp-recruit-vquqd.appspot.com'
+const FORM_API_DEV = 'http://localhost:3440'
+const FORM_API_TEST = 'https://form-test-dot-fp-recruit-vquqd.appspot.com'
+const FORM_API_PROD = 'https://form-dot-fp-recruit-vquqd.appspot.com'
 const CLIENT_ID_TEST = '9s7vo-iiu99-b4w7s-5rxr4'
 const DEFAULT_PAGE_SIZE = 10
 const ANNUALY_ID = 1
 const MONTHLY_ID = 2
 const DAILY_ID = 3
 const HOURLY_ID = 4
+const PER_SALARY = { 1:'year', 2:'month', 3:'day', 4:'hour' }
 
 const _eventBus = new Vue({})
 
 const _idFn = x => x
+
+const _prettifyOffer = offer => {
+	if (!offer || typeof(offer) != 'string')
+		return offer
+
+	/*eslint-disable*/
+	const t = offer.toLowerCase().trim().replace(/[\s_\-\+]+/g,' ')
+	/*eslint-enable*/
+	if (/(resume|cv)/.test(t))
+		return 'Submit Resume'
+	else if (/(vacancy|vacant)/.test(t))
+		return 'Submit Vacancy'
+	else if (/(job alert)/.test(t))
+		return 'Job Alert'
+	else if (/(contact)/.test(t))
+		return 'Contact Us'
+	else if (/(salary guide)/.test(t))
+		return 'Salary Guide'
+	else if (/apply(.*?)job/.test(t))
+		return 'Apply Job'
+	else if (/refer/.test(t))
+		return 'Refer Friend'
+	else 
+		return offer.trim().toLowerCase().replace(/\s+/g, ' ').replace(/(^.|\s.|.$)/g, m => m.toUpperCase())
+}
+
+const CANDIDATE_OFFERS = [
+	'Submit Resume',
+	'Job Alert',
+	'Contact Us',
+	'Salary Guide',
+	'Apply Job',
+	'Refer Friend'
+]
+const CLIENT_OFFERS = [
+	'Submit Vacancy',
+	'Contact Us'
+]
+const _getOfferAndType = offer => {
+	if (!offer || typeof(offer) != 'string')
+		return { offer:null, type:null }
+
+	const prettyOffer = _prettifyOffer(offer)
+
+	const isCandidateOffer = CANDIDATE_OFFERS.indexOf(prettyOffer) >= 0
+	const isClientOffer = CLIENT_OFFERS.indexOf(prettyOffer) >= 0
+
+	const _type = (isCandidateOffer && isClientOffer) || (!isCandidateOffer && !isClientOffer) ? 'other' : isCandidateOffer ? 'candidate' : 'client'
+	return { offer:prettyOffer, type:_type }
+}
 
 function _delay(time) {
 	return new Promise(function (onSuccess) {
@@ -211,7 +265,7 @@ function _fetchJobAds({ where }, options) {
 	let { categories, mode } = options
 	let { clientId } = where
 	let jobApi
-	if (mode == 'dev') {
+	if (mode && mode != 'prod') {
 		jobApi = JOB_API_TEST
 		clientId = CLIENT_ID_TEST
 	} else
@@ -494,19 +548,21 @@ const _getFilterDetails = (filters, name, defaultValue) => {
 }
 
 Vue.component('neap-widget', {
-	props: ['jobads', 'filter'],
+	props: ['jobads', 'filter', 'showjobalertbutton'],
 	template: `
-	<div id="fp-wrapper" class="fp-box fp-container">
-		<div id="fp-side-left" class="fp-col-sm-4 fp-col-md-3" :class="sideMenuClass" v-if="filterToggled">
-			<left-menu-status></left-menu-status>
-			<left-menu :filter="filter"></left-menu>
-		</div>
-		
-		<div id="fp-content" class="fp-col-sm-8 fp-col-md-9 fp-col-xs-12" :class="contentClass">
-			<div class="fp-content-holder">
-				<job-search-header v-if="showSearchCount"></job-search-header>
-				<jobads v-bind:jobads="jobads"></jobads>
-				<page-buttons></page-buttons>
+	<div id="fp-wrapper" class="fp-box fp-container-fluid">
+		<div class="fp-row">
+			<div id="fp-side-left" class="fp-col-sm-12 fp-col-md-4 fp-col-lg-3" :class="sideMenuClass" v-if="filterToggled">
+				<left-menu-status></left-menu-status>
+				<left-menu :filter="filter" :showjobalertbutton="showjobalertbutton"></left-menu>
+			</div>
+			
+			<div id="fp-content" class="fp-col-sm-12 fp-col-md-8 fp-col-lg-9" :class="contentClass">
+				<div class="fp-content-holder">
+					<job-search-header v-if="showSearchCount"></job-search-header>
+					<jobads v-bind:jobads="jobads"></jobads>
+					<page-buttons></page-buttons>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -542,7 +598,7 @@ Vue.component('neap-widget', {
 })
 
 Vue.component('left-menu', {
-	props: ['filter'],
+	props: ['filter', 'showjobalertbutton'],
 	template: `
 	<ul id="fp-side-drop-menu" class="fp-side-menu-cursor" v-if="filterToggled">
 		<li :class="menu.professions.hidden" v-if="classification.toggled">
@@ -622,6 +678,9 @@ Vue.component('left-menu', {
 
 			<div class="neap-salary-submit">
 				<input type="submit" name="salary-submit-button" value="Search" @click="filterBySalary" class="fp-mini-new-buttons fp-btn fp-btn-primary">
+			</div>
+			<div class="neap-salary-submit" v-if="showjobalertbutton">
+				<input type="submit" name="job-alert" value="Create Job Alert" @click="createJobAlert" class="fp-mini-new-buttons fp-btn fp-btn-primary">
 			</div>
 		</li>
 	</ul>`,
@@ -747,6 +806,21 @@ Vue.component('left-menu', {
 				}]
 				this.toggleFilters(filters)
 			}
+		},
+		createJobAlert() {
+			let { filters } = _getQueryStringFilters() || {}
+			filters = filters || []
+			const search = {
+				profession: filters.filter(({ type }) => type == 'professions').map(({ name, strId:id }) => ({ id, name }))[0],
+				role: filters.filter(({ type }) => type == 'roles').map(({ name, strId:id }) => ({ id, name }))[0],
+				location: filters.filter(({ type }) => type == 'locations').map(({ name, strId:id }) => ({ id, name }))[0],
+				area: filters.filter(({ type }) => type == 'areas').map(({ name, strId:id }) => ({ id, name }))[0],
+				type: filters.filter(({ type }) => type == 'workTypes').map(({ name, strId:id }) => ({ id, name }))[0],
+				consultant: filters.filter(({ type }) => type == 'consultants').map(({ name, strId:id }) => ({ id, name }))[0],
+				keywords: filters.filter(({ type }) => type == 'keywords').map(({ name }) => name)[0],
+				salary: filters.filter(({ type }) => type == 'salary').map(({ lower, upper, salaryTypeId }) => ({ min:lower, max:upper, per:PER_SALARY[salaryTypeId] }))[0]
+			}
+			_eventBus.$emit('job-alert-created', search)
 		},
 		toggleFilters(filters) {
 			var vm = this
@@ -1115,7 +1189,7 @@ var fairplay = function(options) {
 	if (!el)
 		throw new Error('Missing required argument \'el\'. Please set up the \'fairplay\' widget with a valid CSS selector (example: fairplay({ el: \'#container\', clientId:\'your-client-id\' }))')
 
-	document.querySelector(el).innerHTML = document.querySelector(el).innerHTML + '<neap-widget v-bind:jobads="jobads" v-bind:filter="filter"></neap-widget>'
+	document.querySelector(el).innerHTML = document.querySelector(el).innerHTML + '<neap-widget :jobads="jobads" :filter="filter" :showjobalertbutton="showJobAlertButton"></neap-widget>'
 	
 	new Vue({
 		el: el,
@@ -1123,7 +1197,8 @@ var fairplay = function(options) {
 			allJobAds:[],
 			allFilteredJobAds:[],
 			jobads:[],
-			filter:options.filter
+			filter:options.filter,
+			showJobAlertButton:options.jobAlert === undefined ? true : options.jobAlert
 		},
 		created(){
 			var vm = this
@@ -1279,10 +1354,7 @@ var fairplay = function(options) {
 	})
 }
 
-const Fairplay = function({ clientId, mode='prod' }) {
-	if (mode != 'prod' && mode != 'dev')
-		throw new Error('Invalid argument \'mode\'. If \'mode\' is set, it must be equal to \'dev\' or \'prod\'.')
-
+const Fairplay = function({ clientId, mode='prod', businessId }) {
 	if (mode == 'prod' && !clientId)
 		throw new Error('Missing required argument \'clientId\'. In production mode (mode = \'prod\' or mode not set), \'clientId\' is required.')
 
@@ -1308,6 +1380,59 @@ const Fairplay = function({ clientId, mode='prod' }) {
 			else
 				throw err 
 		})
+	}
+
+	/**
+	 * [description]
+	 * @param  {String}   form.firstName
+	 * @param  {String}   form.lastName
+	 * @param  {String}   form.email
+	 * @param  {String}   form.phone
+	 * @param  {String}   form.profileImg
+	 * @param  {String}   form.offer
+	 * @param  {String}   form.type
+	 * @param  {String}   form.source  
+	 * @param  {Event}    event				
+	 * @param  {Function} next				
+	 * @return {Void}
+	 */
+	this.submitForm = (form,event,next) => {
+		if (!form)
+			return
+
+		if (!businessId)
+			throw new Error('Missing required \'businessId\'. Try creating a Fairlay instance as follow: new Fairplay({ clientId:<your-client-id>, businessId:<your-business-id> }),  })')
+
+		if (event && event.preventDefault)
+			event.preventDefault()
+
+		const api_base_url = !mode || mode == 'prod' ? FORM_API_PROD : mode == 'local' ? FORM_API_DEV : FORM_API_TEST
+		const api_url = `${api_base_url}/entry/${businessId}`
+
+		const formData = new FormData(form)
+		const { offer, type } = _getOfferAndType(formData.get('offer'))
+
+		formData.set('offer', offer)
+		formData.set('type', type)
+
+		$.ajax({
+			url: api_url,
+			type: 'POST',
+			enctype: 'multipart/form-data',
+			data: formData,
+			processData: false,
+			contentType: false,
+			success: function(data,_,xhr) {
+				next(null, { status: (xhr || {}).status || 500, data })
+			},
+			error: function(xhr,_,error) {
+				next({ status:(xhr || {}).status || 500, data:{ error } })
+			}
+		})
+	}
+
+	this.on = (eventName, next) => {
+		_eventBus.$on(eventName, next)
 	}
 
 	return this
