@@ -18,6 +18,25 @@ const _eventBus = new Vue({})
 
 const _idFn = x => x
 
+const _getSubmitFormArgs = (...args) => {
+	const [form,...rest] = args
+	if (!form)
+		return {}
+
+	const { event,input, next } = rest.reduce((acc,arg) => {
+		const t = typeof(arg)
+		if (arg && arg.preventDefault && typeof(arg.preventDefault) == 'function')
+			acc.event = arg
+		else if (t == 'object')
+			acc.input = arg
+		else if (t == 'function')
+			acc.next = arg
+		return acc
+	},{ event:null,input:{},next:null })
+
+	return { form, event, input, next }
+}
+
 const _prettifyOffer = offer => {
 	if (!offer || typeof(offer) != 'string')
 		return offer
@@ -680,7 +699,7 @@ Vue.component('left-menu', {
 				<input type="submit" name="salary-submit-button" value="Search" @click="filterBySalary" class="fp-mini-new-buttons fp-btn fp-btn-primary">
 			</div>
 			<div class="neap-salary-submit" v-if="showjobalertbutton">
-				<input type="submit" name="job-alert" value="Create Job Alert" @click="createJobAlert" class="fp-mini-new-buttons fp-btn fp-btn-primary">
+				<input type="submit" name="job-alert" value="Create Job Alerts" @click="createJobAlert" class="fp-mini-new-buttons fp-btn fp-btn-primary">
 			</div>
 		</li>
 	</ul>`,
@@ -1384,51 +1403,73 @@ const Fairplay = function({ clientId, mode='prod', businessId }) {
 
 	/**
 	 * [description]
-	 * @param  {String}   form.firstName
-	 * @param  {String}   form.lastName
-	 * @param  {String}   form.email
-	 * @param  {String}   form.phone
-	 * @param  {String}   form.profileImg
-	 * @param  {String}   form.offer
-	 * @param  {String}   form.type
-	 * @param  {String}   form.source  
-	 * @param  {Event}    event				
-	 * @param  {Function} next				
+	 * @param  {Form DOM}		form				e.g., document.getElementById('form-id')
+	 * @param  {Event|Input}    event|input|null	
+	 * @param  {Event|Input}    event|input|null				
+	 * @param  {Function}		next				
 	 * @return {Void}
 	 */
-	this.submitForm = (form,event,next) => {
+	this.submitForm = (...args) => {
+		// 1. Get the arguments and validate them.
+		const { form, event, input, next } = _getSubmitFormArgs(args)
 		if (!form)
 			return
 
 		if (!businessId)
 			throw new Error('Missing required \'businessId\'. Try creating a Fairlay instance as follow: new Fairplay({ clientId:<your-client-id>, businessId:<your-business-id> }),  })')
 
-		if (event && event.preventDefault)
-			event.preventDefault()
+		try {
+			// 2. Cancel the default event behavior if an event arg was passed. That's usually needed to prevent the default form submit behavior.
+			if (event && event.preventDefault)
+				event.preventDefault()
 
-		const api_base_url = !mode || mode == 'prod' ? FORM_API_PROD : mode == 'local' ? FORM_API_DEV : FORM_API_TEST
-		const api_url = `${api_base_url}/entry/${businessId}`
+			// 3.Based on the current env. ('local' vs 'test' vs 'prod'), choose the correct form endpoint.
+			const api_base_url = !mode || mode == 'prod' ? FORM_API_PROD : mode == 'local' ? FORM_API_DEV : FORM_API_TEST
+			const api_url = `${api_base_url}/entry/${businessId}`
 
-		const formData = new FormData(form)
-		const { offer, type } = _getOfferAndType(formData.get('offer'))
+			// 4. Add extra fields to the form if an 'input' arg was explicitely passed.
+			const formData = new FormData(form)
+			const additionalInputFields = Object.keys(input || {})
+			if (additionalInputFields.length)
+				additionalInputFields.forEach(fieldName => {
+					const val = input[fieldName]
+					formData.set(fieldName, val)
+				})
 
-		formData.set('offer', offer)
-		formData.set('type', type)
+			// 5. Make sure the 'offer' and 'type' fields are properly formatted
+			const { offer, type } = _getOfferAndType(formData.get('offer'))
 
-		$.ajax({
-			url: api_url,
-			type: 'POST',
-			enctype: 'multipart/form-data',
-			data: formData,
-			processData: false,
-			contentType: false,
-			success: function(data,_,xhr) {
-				next(null, { status: (xhr || {}).status || 500, data })
-			},
-			error: function(xhr,_,error) {
-				next({ status:(xhr || {}).status || 500, data:{ error } })
-			}
-		})
+			formData.set('offer', offer)
+			formData.set('type', type)
+
+			// 6. Submit the form
+			$.ajax({
+				url: api_url,
+				type: 'POST',
+				enctype: 'multipart/form-data',
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function(data,_,xhr) {
+					if (next)
+						next(null, { status: (xhr || {}).status || 500, data })
+				},
+				error: function(xhr,_,error) {
+					if (next)
+						next({ status:(xhr || {}).status || 500, data:{ error } })
+				}
+			})
+		} catch (err) {
+			if (next)
+				next({ 
+					status:0, 
+					data:{ 
+						error: {
+							message: `Operation failed before sending AJAX HTTP POST. Details: ${err.message}`,
+							stack: `${err.stack}`
+						}
+					} })
+		}
 	}
 
 	this.on = (eventName, next) => {
