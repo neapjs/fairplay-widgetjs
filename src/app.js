@@ -14,6 +14,22 @@ const DAILY_ID = 3
 const HOURLY_ID = 4
 const PER_SALARY = { 1:'year', 2:'month', 3:'day', 4:'hour' }
 
+let MockedVue = function() {
+
+	this.$on = () => null
+	this.$emit = () => null
+
+	return this
+}
+
+// This is for unit testing
+MockedVue.component = () => null
+MockedVue.set = () => null
+if (!window || !window.Vue) {
+	console.log('FYI - You are in testing mode. Vue has been mocked.')
+	global.Vue = global.Vue || MockedVue
+}
+
 const _eventBus = new Vue({})
 
 const _idFn = x => x
@@ -101,6 +117,13 @@ function _stringToIds(str) {
 	return (str || '').split('_').map(function(s){return s*1})
 }
 
+/**
+ * Gets the IDs that match the same category name than the current category 'id'.
+ * 
+ * @param  {String|Number} 	id         		e.g., 1
+ * @param  {Object} 		categories		All system's categories (e.g., { 1:'IT', 2:'IT', 3:'Human Resources' })
+ * @return {[Number]}		IDs				e.g., [1,2]. If 'categories' is {}, then response id [id]
+ */
 function _getCategoryId(id, categories) {
 	categories = categories || {}
 	var mappedCategoryName = categories[id]
@@ -1172,6 +1195,102 @@ Vue.component('job-search-header', {
 	}
 })
 
+const _classificationsToCategories = (options) => {
+	const { classifications } = options || {}
+	if (!classifications)
+		return null
+
+	return [
+		...(classifications.professions || []),
+		...(classifications.locations || []),
+		...(classifications.workTypes || [])
+	].reduce((acc, c) => {
+		if (c && c.ids && c.ids.length) 
+			c.ids.forEach(id => acc[id] = c.name)
+		const subs = [...(c.roles || []), ...(c.areas || [])]
+		subs.forEach(sc => {
+			if (sc && sc.ids && sc.ids.length) 
+				sc.ids.forEach(id => acc[id] = sc.name)
+		})
+		return acc
+	}, {})
+}
+
+const _addStrId = entities => {
+	if (!entities || !entities.length)
+		return []
+
+	return entities.map(e => {
+		e.strId = e && e.ids ? e.ids.sort((a,b) => a >= b).join('_') : ''
+		if (e.roles && e.roles.length)
+			e.roles.forEach(r => r.strId = r && r.ids ? r.ids.sort((a,b) => a >= b).join('_') : '')
+		if (e.areas && e.areas.length)
+			e.areas.forEach(r => r.strId = r && r.ids ? r.ids.sort((a,b) => a >= b).join('_') : '')
+		return e
+	})
+}
+
+/**
+ * 
+ * @param  {Object} 		classifications			
+ * @param  {String} 		where.repo			Valid values: null, 'profession', 'location', 'workType', 'role', 'area'
+ * @param  {String|Number} 	where.id			e.g., 1, or '2' or '1_2'
+ * @param  {String} 		where.name			e.g., 'Manager'
+ * @return {Entities}
+ */
+const _selectClassification = (classifications, where) => {
+	if (!classifications)
+		return []
+
+	const { repo, id, name } = where || {}
+
+	const entities = []
+	if (!repo || repo == 'profession') 
+		entities.push(...classifications.professions || [])
+	if (!repo || repo == 'role') {
+		entities.push(...(classifications.professions || []).reduce((acc,entity) => {
+			if (entity && entity.roles && entity.roles.length)
+				acc.push(...entity.roles)
+			return acc
+		},[]))
+	}
+	if (!repo || repo == 'location') 
+		entities.push(...classifications.locations || [])
+	if (!repo || repo == 'area') {
+		entities.push(...(classifications.locations || []).reduce((acc,entity) => {
+			if (entity && entity.areas && entity.areas.length)
+				acc.push(...entity.areas)
+			return acc
+		}),[])
+	}
+	if (!repo || repo == 'workType')
+		entities.push(...classifications.workTypes || [])
+
+	if (!id && !name)
+		return _addStrId(entities)
+
+	if (id) {
+		const t = typeof(id)
+		const ids = t == 'string' 
+			? id.split('_').map(i => i*1).filter(i => !isNaN(i)) 
+			: t == 'number' ? [id] : null 
+
+		if (!ids)
+			return []
+
+		return _addStrId(entities.filter(e => e && e.ids && e.ids.some(i => ids.some(id => id == i))))
+	} else if (name) {
+		const n = name.trim().toLowerCase()
+		return _addStrId(entities.filter(e => e && e.ids && e.name && e.name.toLowerCase().indexOf(n) >= 0))
+	}
+}
+
+const _findClassification = (classifications, where) => {
+	const results = _selectClassification(classifications, where) || []
+	return results[0]
+}
+
+
 /**
  * Creates a Fairplay widget and attaches it under the DOM identified by ''. 
  * 
@@ -1201,7 +1320,7 @@ Vue.component('job-search-header', {
  */
 var fairplay = function(options) {
 	options = options || {}
-	options.categories = options.categories || {}
+	options.categories = _classificationsToCategories(options) || options.categories || {}
 	options.pageSize = options.pageSize || DEFAULT_PAGE_SIZE
 	var pageSize = options.pageSize
 	var el = options.el 
@@ -1373,7 +1492,7 @@ var fairplay = function(options) {
 	})
 }
 
-const Fairplay = function({ clientId, mode='prod', businessId }) {
+const Fairplay = function({ clientId, mode='prod', businessId, classifications }) {
 	if (mode == 'prod' && !clientId)
 		throw new Error('Missing required argument \'clientId\'. In production mode (mode = \'prod\' or mode not set), \'clientId\' is required.')
 
@@ -1381,6 +1500,8 @@ const Fairplay = function({ clientId, mode='prod', businessId }) {
 		options = options || {}
 		options.clientId = clientId
 		options.mode = mode
+		if (classifications)
+			options.classifications = classifications
 		fairplay(options)
 	}
 
@@ -1476,12 +1597,36 @@ const Fairplay = function({ clientId, mode='prod', businessId }) {
 		_eventBus.$on(eventName, next)
 	}
 
+	this.repo = {
+		profession: {
+			find: query => _findClassification(classifications, query ? Object.assign((query.where || {}), { repo:'profession' }) : null),
+			where: query => _selectClassification(classifications, query ? Object.assign((query.where || {}), { repo:'profession' }) : null)
+		},
+		role: {
+			find: query => _findClassification(classifications, query ? Object.assign((query.where || {}), { repo:'role' }) : null),
+			where: query => _selectClassification(classifications, query ? Object.assign((query.where || {}), { repo:'role' }) : null)
+		},
+		location: {
+			find: query => _findClassification(classifications, query ? Object.assign((query.where || {}), { repo:'location' }) : null),
+			where: query => _selectClassification(classifications, query ? Object.assign((query.where || {}), { repo:'location' }) : null)
+		},
+		area: {
+			find: query => _findClassification(classifications, query ? Object.assign((query.where || {}), { repo:'area' }) : null),
+			where: query => _selectClassification(classifications, query ? Object.assign((query.where || {}), { repo:'area' }) : null)
+		},
+		workType: {
+			find: query => _findClassification(classifications, query ? Object.assign((query.where || {}), { repo:'workType' }) : null),
+			where: query => _selectClassification(classifications, query ? Object.assign((query.where || {}), { repo:'workType' }) : null)
+		}
+	}
+
 	return this
 }
 
 export {
 	Fairplay,
-	fairplay
+	fairplay,
+	_classificationsToCategories
 }
 
 

@@ -23,23 +23,31 @@
     "lint": "eslint index.js src/ test/ --fix",
     "push": "git push --follow-tags origin master && npm publish --access=public",
     "rls": "standard-version --release-as",
-    "test": "mocha",
+    "test": "jest",
     "v": "node -e \"console.log(require('./package.json').version)\""
   },
   "author": "Nicolas Dao",
   "license": "BSD-3-Clause",
   "devDependencies": {
+    "@vue/test-utils": "^1.0.0-beta.29",
+    "ajv": "^6.10.0",
     "babel-core": "^6.25.0",
+    "babel-jest": "^24.8.0",
     "babel-loader": "^7.0.0",
     "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-es2015": "^6.24.1",
     "chai": "^4.1.2",
     "eslint": "^4.19.1",
+    "jest": "^24.8.0",
     "mocha": "^5.2.0",
     "node-fetch": "^2.3.0",
     "standard-version": "^4.4.0",
     "uglifycss": "0.0.29",
     "uglifyjs-webpack-plugin": "^0.4.3",
+    "vue": "^2.6.10",
+    "vue-jest": "^3.0.4",
+    "vue-template-compiler": "^2.6.10",
     "webpack": "^2.6.1"
   },
   "dependencies": {
@@ -48,5 +56,16 @@
     "express": "^4.16.4",
     "google-cloud-bucket": "^0.9.2",
     "shortid": "^2.2.14"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "vue"
+    ],
+    "transform": {
+      ".*\\.(vue)$": "vue-jest",
+      "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
+    }
   }
 }

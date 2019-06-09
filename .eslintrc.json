@@ -13,7 +13,8 @@
         "__dirname": false,
         "Vue": false,
         "fairplay": false,
-        "$": false
+        "$": false,
+        "expect":false
     },
     "parserOptions": {
         "sourceType": "module",

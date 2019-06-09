@@ -9,6 +9,10 @@
 > * [Annexes](#annexes)
 > * [JobAdder - Neap Board Categories](#jobadder-neap-board-categories)
 
+# IMPORTANT
+
+This SDK requires `vue.js` and `jQuery`.
+
 # Getting Started
 
 ```html
@@ -16,7 +20,8 @@
 <html>
 <head>
 	<title>View JS Test</title>
-	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs/dist/fairplay.min.css">
 </head>
 <body>
@@ -35,6 +40,7 @@
 				5821: 'Internet & Telco' 
 			}
 		})
+
 		fp.getJobAds({ where:{ professionId:1123 } }, (err,data) => { console.log(data) })
 	</script>
 </body>
@@ -55,67 +61,206 @@ You can access that JS and the default CSS using a specific version as follow:
 To create a Fairplay object, make sure you have your `clientId` (unless you're using the SDK in `dev` mode):
 
 ```js
-var fp = new Fairplay({ clientId:'123456789' });
+var fp = new Fairplay({ 
+	clientId:'123456789',   // Required
+	businessId: 123,		// Required for certain APIs (e.g., 'submitForm')
+	classifications: {	  // Optional. Used to overides out-of-the-box classification names, merge classfications into a single one or find classification to power select boxes.
+		professions: [{
+			ids:[1,2],
+			name: 'IT',
+			roles:[{
+				ids:[100],
+				name: 'Manager'
+			}, {
+				ids:[200,300,400],
+				name: 'Support'
+			}]
+		}, {
+			ids:[3],
+			name: 'Human Resources',
+			roles:[{
+				ids:[110],
+				name: 'Head of Recruitment'
+			}, {
+				ids:[210,310,410],
+				name: 'Compliance Manager'
+			}]
+		}],
+		locations: [{
+			ids:[10,20,30],
+			name: 'Sydney',
+			areas:[{
+				ids:[1000],
+				name: 'CBD'
+			}, {
+				ids:[2000,3000,4000],
+				name: 'Inner West'
+			}]
+		}, {
+			ids:[40],
+			name: 'Melbourne',
+			areas:[{
+				ids:[5000,6000],
+				name: 'CBD'
+			}, {
+				ids:[7000],
+				name: 'Coast'
+			}]
+		}],
+		workTypes: [{
+			ids:[60],
+			name: 'Full-time'
+		}, {
+			ids:[70],
+			name: 'Part-time'
+		}, {
+			ids:[80,90],
+			name: 'Contract'
+		}]
+	}
+});
 ```
 
-## `getJobAds({ where:<Where> }, next:<Function>)`
+## `fp.getJobAds({ where:<Where> }, next:<Function>)`
+
+ - where.ownerId		 Recruiter's ID. 
+ - where.ownerEmail	  Recruiter's email. 
+ - where.jobId		   
+ - where.professionId	
+ - where.roleId		  
+ - where.locationId	  
+ - where.areaId		  
+ - where.workTypeId	  
+ - where.salary.per	  
+ - where.salary.lowest   
+ - where.salary.highest  
 
 ### JobAd Object
 
 ```js
 {
-    "id": "1265",
-    "title": "Junior IT specialist for Hospital systems",
-    "summary": "Looking for Junior IT specialist for Hospital systems to help supporting all IT systems in the hospital.",
-    "bulletPoints": [
-        "Advantageous package",
-        "Flexible holidays"
-    ],
-    "created": "2018-12-20T03:22:19Z",
-    "owner": null,
-    "profession":
-    {
-        "id": "5843",
-        "name": "IT",
-        "role":
-        {
-            "id": "6286",
-            "name": "Helpdesk & Support",
-            "link": "?professions=IT-5843&roles=Helpdesk%20%26%20Support-6286"
-        },
-        "link": "?professions=IT-5843"
-    },
-    "location":
-    {
-        "id": "6628",
-        "name": "Sydney",
-        "area":
-        {
-            "id": "6654",
-            "name": "North West & Hills District"
-        }
-    },
-    "workType":
-    {
-        "id": "5815",
-        "name": "Full Time"
-    },
-    "salary":
-    {
-        "per": "Hour",
-        "lowest": 40,
-        "highest": 50,
-        "lower": 40,
-        "upper": 50,
-        "id": 4,
-        "description": "$40 - $50 per hour"
-    },
-    "date": "20/12/2018",
-    "link": "/jobs/it/junior-it-specialist-for-hospital-systems/1265",
-    "consultant": {
+	"id": "1265",
+	"title": "Junior IT specialist for Hospital systems",
+	"summary": "Looking for Junior IT specialist for Hospital systems to help supporting all IT systems in the hospital.",
+	"bulletPoints": [
+		"Advantageous package",
+		"Flexible holidays"
+	],
+	"created": "2018-12-20T03:22:19Z",
+	"owner": null,
+	"profession":
+	{
+		"id": "5843",
+		"name": "IT",
+		"role":
+		{
+			"id": "6286",
+			"name": "Helpdesk & Support",
+			"link": "?professions=IT-5843&roles=Helpdesk%20%26%20Support-6286"
+		},
+		"link": "?professions=IT-5843"
+	},
+	"location":
+	{
+		"id": "6628",
+		"name": "Sydney",
+		"area":
+		{
+			"id": "6654",
+			"name": "North West & Hills District"
+		}
+	},
+	"workType":
+	{
+		"id": "5815",
+		"name": "Full Time"
+	},
+	"salary":
+	{
+		"per": "Hour",
+		"lowest": 40,
+		"highest": 50,
+		"lower": 40,
+		"upper": 50,
+		"id": 4,
+		"description": "$40 - $50 per hour"
+	},
+	"date": "20/12/2018",
+	"link": "/jobs/it/junior-it-specialist-for-hospital-systems/1265",
+	"consultant": {
 
-    }
+	}
 }
+```
+
+## `fp.submitForm(formDOM:<DOM>[, event:<Event>, input:<Object>, next:<Function>])`
+
+```js
+document.getElementById('main-form').addEventListener('submit', function(event) {
+	fp.submitForm(this,event, (error, res) => {
+		if (error) {
+			console.log('ERROR')
+			console.log(JSON.stringify(error))
+		} else {
+			console.log(`Status: ${res.status}`)
+			console.log(`Data: ${res.data}`)
+		}
+	})
+})
+```
+
+```js
+var formDOM = document.getElementById('main-form')
+var extraInputs = { offer:'Submit Resume' }
+
+// As you can see we can also omit the 'event' input.
+js.submitForm(formDOM,extraInputs,function(error,res) {
+	if (error) {
+		console.log('ERROR')
+		console.log(JSON.stringify(error))
+	} else {
+		console.log(`Status: ${res.status}`)
+		console.log(`Data: ${res.data}`)
+	}
+})
+```
+
+## `fp.repo.profession.find({ where:<Object> })`
+
+> WARNING: This API only returns values if the optional `classifications` input was setup during the Fairplay instance creation.
+	
+- where.id
+- where.name
+
+```js
+var p01 = fp.repo.profession.find({ where:{ id:1 } })
+var p02 = fp.repo.profession.find({ where:{ id:'2' } })
+var p03 = fp.repo.profession.find({ where:{ id:'1_2' } }) // equivalent to a search by ID where ID is equal to 1 or 2.
+```
+
+`profession` is not the only type of classification that cna be searched. The others are:
+
+- `profession`
+- `role`
+- `location`
+- `area`
+- `workType`
+
+## `fp.on(eventName:<String>, next:<Function>)`
+
+As of today, the only supported event is `job-alert-created`, which is fired after the _Create Job Alert_ button is clicked.
+
+```js
+fp.on('job-alert-created', data => {
+	console.log(data.profession)	// e.g., { strId: '1_2', name:'Sales' }
+	console.log(data.role)			// e.g., { strId: '10', name:'Manager' }
+	console.log(data.location)		// e.g., { strId: '10_20', name:'Sydney' }
+	console.log(data.area)			// e.g., { strId: '30', name:'CBD' }
+	console.log(data.type)			// e.g., { strId: '400', name:'Full-time' }
+	console.log(data.consultant)	
+	console.log(data.keywords)		// e.g., 'Senior SDR'
+	console.log(data.salary)		// e.g., { min:100, max:200, per:'hour' }
+})
 ```
 
 # How To
