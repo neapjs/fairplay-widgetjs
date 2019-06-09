@@ -719,7 +719,7 @@ Vue.component('left-menu', {
 			<div class="neap-salary-bands-error" v-if="showSalaryError">Please enter at least one min. or max. salary greater than zero</div>
 
 			<div class="neap-salary-submit">
-				<input type="submit" name="salary-submit-button" value="Search" @click="filterBySalary" class="fp-mini-new-buttons fp-btn fp-btn-primary">
+				<input type="submit" name="salary-submit-button" value="Filter by Salary" @click="filterBySalary" class="fp-mini-new-buttons fp-btn fp-btn-primary">
 			</div>
 			<div class="neap-salary-submit" v-if="showjobalertbutton">
 				<input type="submit" name="job-alert" value="Create Job Alerts" @click="createJobAlert" class="fp-mini-new-buttons fp-btn fp-btn-primary">
