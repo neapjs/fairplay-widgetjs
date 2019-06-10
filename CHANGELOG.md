@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.3.6"></a>
+## [0.3.6](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.3.5...v0.3.6) (2019-06-10)
+
+
+
 <a name="0.3.5"></a>
 ## [0.3.5](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.3.4...v0.3.5) (2019-06-10)
 
