@@ -35,22 +35,18 @@ const _eventBus = new Vue({})
 const _idFn = x => x
 
 const _getSubmitFormArgs = (...args) => {
-	const [form,...rest] = args
-	if (!form)
-		return {}
-
-	const { event,input, next } = rest.reduce((acc,arg) => {
+	return args.reduce((acc,arg) => {
 		const t = typeof(arg)
-		if (arg && arg.preventDefault && typeof(arg.preventDefault) == 'function')
+		if (arg instanceof Element)
+			acc.form = arg
+		else if (arg && arg.preventDefault && typeof(arg.preventDefault) == 'function')
 			acc.event = arg
 		else if (t == 'object')
 			acc.input = arg
 		else if (t == 'function')
 			acc.next = arg
 		return acc
-	},{ event:null,input:{},next:null })
-
-	return { form, event, input, next }
+	},{ event:null,input:{},next:null, form:null })
 }
 
 const _prettifyOffer = offer => {
@@ -579,7 +575,7 @@ function _updateQueryString(queryString) {
 		window.location.replace(newUrl)
 } 
 
-const _getFilterDetails = (filters, name, defaultValue) => {
+const _getFilterStatus = (filters, name, defaultValue) => {
 	if (filters && filters[name]) {
 		return { 
 			name: filters[name].name || defaultValue, 
@@ -587,6 +583,23 @@ const _getFilterDetails = (filters, name, defaultValue) => {
 		}
 	} else
 		return { name:defaultValue, toggled:true }
+}
+
+const _getCurrentFilterDetails = () => {
+	let { filters } = _getQueryStringFilters() || {}
+	filters = filters || []
+	const search = {
+		profession: filters.filter(({ type }) => type == 'professions').map(({ name, strId:id }) => ({ id, name }))[0],
+		role: filters.filter(({ type }) => type == 'roles').map(({ name, strId:id }) => ({ id, name }))[0],
+		location: filters.filter(({ type }) => type == 'locations').map(({ name, strId:id }) => ({ id, name }))[0],
+		area: filters.filter(({ type }) => type == 'areas').map(({ name, strId:id }) => ({ id, name }))[0],
+		type: filters.filter(({ type }) => type == 'workTypes').map(({ name, strId:id }) => ({ id, name }))[0],
+		consultant: filters.filter(({ type }) => type == 'consultants').map(({ name, strId:id }) => ({ id, name }))[0],
+		keywords: filters.filter(({ type }) => type == 'keywords').map(({ name }) => name)[0],
+		salary: filters.filter(({ type }) => type == 'salary').map(({ lower, upper, salaryTypeId }) => ({ min:lower, max:upper, per:PER_SALARY[salaryTypeId] }))[0]
+	}
+
+	return search
 }
 
 Vue.component('neap-widget', {
@@ -781,25 +794,25 @@ Vue.component('left-menu', {
 			return this.filter === undefined || this.filter.toggled === undefined ? true : this.filter.toggled
 		},
 		classification() {
-			return _getFilterDetails(this.filter, 'classification', 'Classification')
+			return _getFilterStatus(this.filter, 'classification', 'Classification')
 		},
 		subClassification() {
-			return _getFilterDetails(this.filter, 'subClassification', 'Role')
+			return _getFilterStatus(this.filter, 'subClassification', 'Role')
 		},
 		location() {
-			return _getFilterDetails(this.filter, 'location', 'Location')
+			return _getFilterStatus(this.filter, 'location', 'Location')
 		},
 		area() {
-			return _getFilterDetails(this.filter, 'area', 'Area')
+			return _getFilterStatus(this.filter, 'area', 'Area')
 		},
 		workType() {
-			return _getFilterDetails(this.filter, 'workType', 'Work type')
+			return _getFilterStatus(this.filter, 'workType', 'Work type')
 		},
 		consultant() {
-			return _getFilterDetails(this.filter, 'consultant', 'Consultant')
+			return _getFilterStatus(this.filter, 'consultant', 'Consultant')
 		},
 		salary() {
-			return _getFilterDetails(this.filter, 'salary', 'Salary')
+			return _getFilterStatus(this.filter, 'salary', 'Salary')
 		},
 	},
 	methods: {
@@ -850,18 +863,7 @@ Vue.component('left-menu', {
 			}
 		},
 		createJobAlert() {
-			let { filters } = _getQueryStringFilters() || {}
-			filters = filters || []
-			const search = {
-				profession: filters.filter(({ type }) => type == 'professions').map(({ name, strId:id }) => ({ id, name }))[0],
-				role: filters.filter(({ type }) => type == 'roles').map(({ name, strId:id }) => ({ id, name }))[0],
-				location: filters.filter(({ type }) => type == 'locations').map(({ name, strId:id }) => ({ id, name }))[0],
-				area: filters.filter(({ type }) => type == 'areas').map(({ name, strId:id }) => ({ id, name }))[0],
-				type: filters.filter(({ type }) => type == 'workTypes').map(({ name, strId:id }) => ({ id, name }))[0],
-				consultant: filters.filter(({ type }) => type == 'consultants').map(({ name, strId:id }) => ({ id, name }))[0],
-				keywords: filters.filter(({ type }) => type == 'keywords').map(({ name }) => name)[0],
-				salary: filters.filter(({ type }) => type == 'salary').map(({ lower, upper, salaryTypeId }) => ({ min:lower, max:upper, per:PER_SALARY[salaryTypeId] }))[0]
-			}
+			const search = _getCurrentFilterDetails()
 			_eventBus.$emit('job-alert-created', search)
 		},
 		toggleFilters(filters) {
@@ -1261,7 +1263,7 @@ const _selectClassification = (classifications, where) => {
 			if (entity && entity.areas && entity.areas.length)
 				acc.push(...entity.areas)
 			return acc
-		}),[])
+		},[]))
 	}
 	if (!repo || repo == 'workType')
 		entities.push(...classifications.workTypes || [])
@@ -1492,7 +1494,7 @@ var fairplay = function(options) {
 	})
 }
 
-const Fairplay = function({ clientId, mode='prod', businessId, classifications }) {
+const Fairplay = function({ clientId, mode='prod', businessId, classifications, debug }) {
 	if (mode == 'prod' && !clientId)
 		throw new Error('Missing required argument \'clientId\'. In production mode (mode = \'prod\' or mode not set), \'clientId\' is required.')
 
@@ -1532,9 +1534,17 @@ const Fairplay = function({ clientId, mode='prod', businessId, classifications }
 	 */
 	this.submitForm = (...args) => {
 		// 1. Get the arguments and validate them.
-		const { form, event, input, next } = _getSubmitFormArgs(args)
-		if (!form)
-			return
+		const { form, event, input, next } = _getSubmitFormArgs(...args)
+		if (debug) {
+			console.log('form')
+			console.log(form)
+			console.log('event')
+			console.log(event)
+			console.log('input')
+			console.log(input)
+			console.log('next')
+			console.log(next)
+		}
 
 		if (!businessId)
 			throw new Error('Missing required \'businessId\'. Try creating a Fairlay instance as follow: new Fairplay({ clientId:<your-client-id>, businessId:<your-business-id> }),  })')
@@ -1554,11 +1564,15 @@ const Fairplay = function({ clientId, mode='prod', businessId, classifications }
 			if (additionalInputFields.length)
 				additionalInputFields.forEach(fieldName => {
 					const val = input[fieldName]
-					formData.set(fieldName, val)
+					const canonicalVal = typeof(val) == 'object' && !(val instanceof Date) ? JSON.stringify(val) : val
+					formData.set(fieldName, canonicalVal)
 				})
 
 			// 5. Make sure the 'offer' and 'type' fields are properly formatted
 			const { offer, type } = _getOfferAndType(formData.get('offer'))
+
+			if (debug)
+				console.log({ offer, type })
 
 			formData.set('offer', offer)
 			formData.set('type', type)
@@ -1599,26 +1613,28 @@ const Fairplay = function({ clientId, mode='prod', businessId, classifications }
 
 	this.repo = {
 		profession: {
-			find: query => _findClassification(classifications, query ? Object.assign((query.where || {}), { repo:'profession' }) : null),
-			where: query => _selectClassification(classifications, query ? Object.assign((query.where || {}), { repo:'profession' }) : null)
+			find: query => _findClassification(classifications, Object.assign(((query || {}).where || {}), { repo:'profession' })),
+			select: query => _selectClassification(classifications, Object.assign(((query || {}).where || {}), { repo:'profession' }))
 		},
 		role: {
-			find: query => _findClassification(classifications, query ? Object.assign((query.where || {}), { repo:'role' }) : null),
-			where: query => _selectClassification(classifications, query ? Object.assign((query.where || {}), { repo:'role' }) : null)
+			find: query => _findClassification(classifications, Object.assign(((query || {}).where || {}), { repo:'role' })),
+			select: query => _selectClassification(classifications, Object.assign(((query || {}).where || {}), { repo:'role' }))
 		},
 		location: {
-			find: query => _findClassification(classifications, query ? Object.assign((query.where || {}), { repo:'location' }) : null),
-			where: query => _selectClassification(classifications, query ? Object.assign((query.where || {}), { repo:'location' }) : null)
+			find: query => _findClassification(classifications, Object.assign(((query || {}).where || {}), { repo:'location' })),
+			select: query => _selectClassification(classifications, Object.assign(((query || {}).where || {}), { repo:'location' }))
 		},
 		area: {
-			find: query => _findClassification(classifications, query ? Object.assign((query.where || {}), { repo:'area' }) : null),
-			where: query => _selectClassification(classifications, query ? Object.assign((query.where || {}), { repo:'area' }) : null)
+			find: query => _findClassification(classifications, Object.assign(((query || {}).where || {}), { repo:'area' })),
+			select: query => _selectClassification(classifications, Object.assign(((query || {}).where || {}), { repo:'area' }))
 		},
 		workType: {
-			find: query => _findClassification(classifications, query ? Object.assign((query.where || {}), { repo:'workType' }) : null),
-			where: query => _selectClassification(classifications, query ? Object.assign((query.where || {}), { repo:'workType' }) : null)
+			find: query => _findClassification(classifications, Object.assign(((query || {}).where || {}), { repo:'workType' })),
+			select: query => _selectClassification(classifications, Object.assign(((query || {}).where || {}), { repo:'workType' }))
 		}
 	}
+
+	this.getCurrentFilter = _getCurrentFilterDetails
 
 	return this
 }

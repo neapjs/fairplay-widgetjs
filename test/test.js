@@ -88,6 +88,79 @@ describe('_classificationsToCategories', () => {
 })
 
 describe('Fairplay', () => {
+	describe('repo.<repo-name>.select', () => {
+		it('returns the correct entity', () => {
+			const fp = new Fairplay({
+				mode:'dev',
+				classifications: {
+					professions: [{
+						ids:[1,2],
+						name: 'IT',
+						roles:[{
+							ids:[100],
+							name: 'Manager'
+						}, {
+							ids:[200,300,400],
+							name: 'Support'
+						}]
+					}, {
+						ids:[3],
+						name: 'Human Resources',
+						roles:[{
+							ids:[110],
+							name: 'Head of Recruitment'
+						}, {
+							ids:[210,310,410],
+							name: 'Compliance Manager'
+						}]
+					}],
+					locations: [{
+						ids:[10,20,30],
+						name: 'Sydney',
+						areas:[{
+							ids:[1000],
+							name: 'CBD'
+						}, {
+							ids:[2000,3000,4000],
+							name: 'Inner West'
+						}]
+					}, {
+						ids:[40],
+						name: 'Melbourne',
+						areas:[{
+							ids:[5000,6000],
+							name: 'CBD'
+						}, {
+							ids:[7000],
+							name: 'Coast'
+						}]
+					}],
+					workTypes: [{
+						ids:[60],
+						name: 'Full-time'
+					}, {
+						ids:[70],
+						name: 'Part-time'
+					}, {
+						ids:[80,90],
+						name: 'Contract'
+					}]
+				}
+			})
+
+			const professions_01 = fp.repo.profession.select().map(({ name }) => name)
+			const professions_02 = fp.repo.profession.select({ where:{id:1} }).map(({ name }) => name)
+			const professions_03 = fp.repo.profession.select({ where:{name: 'man'} }).map(({ name }) => name)
+
+			expect(professions_01.length).toBe(2)
+			expect(professions_02.length).toBe(1)
+			expect(professions_03.length).toBe(1)
+			expect(professions_01[0]).toBe('IT')
+			expect(professions_01[1]).toBe('Human Resources')
+			expect(professions_02[0]).toBe('IT')
+			expect(professions_03[0]).toBe('Human Resources')
+		})
+	})
 	describe('repo.<repo-name>.find', () => {
 		it('returns the correct entity', () => {
 			const fp = new Fairplay({
