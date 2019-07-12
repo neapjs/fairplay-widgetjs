@@ -60,12 +60,12 @@ const _prettifyOffer = offer => {
 		return 'Submit Resume'
 	else if (/(vacancy|vacant)/.test(t))
 		return 'Submit Vacancy'
-	else if (/(job alert)/.test(t))
+	else if (/(job(.*?)alert)/.test(t))
 		return 'Job Alert'
 	else if (/(contact)/.test(t))
 		return 'Contact Us'
-	else if (/(salary guide)/.test(t))
-		return 'Salary Guide'
+	else if (/(free(.*?)report)/.test(t))
+		return 'Free Report'
 	else if (/apply(.*?)job/.test(t))
 		return 'Apply Job'
 	else if (/refer/.test(t))
@@ -78,7 +78,7 @@ const CANDIDATE_OFFERS = [
 	'Submit Resume',
 	'Job Alert',
 	'Contact Us',
-	'Salary Guide',
+	'Free Report',
 	'Apply Job',
 	'Refer Friend'
 ]
@@ -1569,7 +1569,9 @@ const Fairplay = function({ clientId, mode='prod', businessId, classifications, 
 				})
 
 			// 5. Make sure the 'offer' and 'type' fields are properly formatted
-			const { offer, type } = _getOfferAndType(formData.get('offer'))
+			let { offer, type } = _getOfferAndType(formData.get('offer'))
+			if (formData.get('type'))
+				type = formData.get('type')
 
 			if (debug)
 				console.log({ offer, type })
