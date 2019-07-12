@@ -1,6 +1,15 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [0.4.0](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.3.7...v0.4.0) (2019-07-12)
+
+
+### Bug Fixes
+
+* Serialize JSON object to string for submitForm ([1bff0e4](https://gitlab.com/neap/fairplay-widgetjs/commit/1bff0e4))
+
+
 
 <a name="0.3.7"></a>
 ## [0.3.7](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.3.6...v0.3.7) (2019-06-10)
