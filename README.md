@@ -224,10 +224,11 @@ document.getElementById('main-form').addEventListener('submit', function(event) 
 
 ```js
 var formDOM = document.getElementById('main-form')
+// Valid offers: 'Submit Resume', 'Submit Vacancy', 'Job Alert', 'Contact Us', 'Free Report', 'Apply Job', 'Refer Friend'
 var extraInputs = { offer:'Submit Resume' }
 
 // As you can see we can also omit the 'event' input.
-js.submitForm(formDOM,extraInputs,function(error,res) {
+fp.submitForm(formDOM,extraInputs,function(error,res) {
 	if (error) {
 		console.log('ERROR')
 		console.log(JSON.stringify(error))
@@ -241,7 +242,7 @@ js.submitForm(formDOM,extraInputs,function(error,res) {
 ### Example 03 - Using Explicit Fields With No Form Element
 
 ```js
-js.submitForm({ firstName:'Nic', lastName:'Dao' }, function(error,res) {
+fp.submitForm({ firstName:'Nic', lastName:'Dao' }, function(error,res) {
 	if (error) {
 		console.log('ERROR')
 		console.log(JSON.stringify(error))
