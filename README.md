@@ -2,10 +2,15 @@
 
 > * [Getting Started](#getting-started)
 > * [Where Am I Hosted?](#where-am-i-hosted)
+> * [API - Fairplay Object](#api---fairplay-object)
+>	- [getJobAds](#getjobads)
+>	- [submitForm](#submitform)
+>	- [fp.repo.profession.find](#fprepoprofessionfind)
+>	- [fp.on](#fpon)
 > * [How To](#how-to)
->   - [How To Test Locally](#how-to-test-locally)
->   - [How To Compile The Code To ES5](#how-to-compile-the-code-to-es5)
->   - [How To Deploy A New Version](#how-to-deploy-a-new-version)
+>	- [How To Test Locally](#how-to-test-locally)
+>	- [How To Compile The Code To ES5](#how-to-compile-the-code-to-es5)
+>	- [How To Deploy A New Version](#how-to-deploy-a-new-version)
 > * [Annexes](#annexes)
 > * [JobAdder - Neap Board Categories](#jobadder-neap-board-categories)
 
@@ -121,7 +126,9 @@ var fp = new Fairplay({
 });
 ```
 
-## `fp.getJobAds({ where:<Where> }, next:<Function>)`
+## getJobAds
+
+`fp.getJobAds({ where:<Where> }, next:<Function>)`
 
  - where.ownerId		 Recruiter's ID. 
  - where.ownerEmail	  Recruiter's email. 
@@ -193,7 +200,9 @@ var fp = new Fairplay({
 }
 ```
 
-## `fp.submitForm([formDOM:<Element>, event:<Event>, input:<Object>, next:<Function>])`
+## submitForm
+
+`fp.submitForm([formDOM:<Element>, event:<Event>, input:<Object>, next:<Function>])`
 
 ### Example 01 - Using a Form Element
 
@@ -243,7 +252,9 @@ js.submitForm({ firstName:'Nic', lastName:'Dao' }, function(error,res) {
 })
 ```
 
-## `fp.repo.profession.find({ where:<Object> })`
+## fp.repo.profession.find
+
+`fp.repo.profession.find({ where:<Object> })`
 
 > WARNING: This API only returns values if the optional `classifications` input was setup during the Fairplay instance creation.
 	
@@ -264,7 +275,9 @@ var p03 = fp.repo.profession.find({ where:{ id:'1_2' } }) // equivalent to a sea
 - `area`
 - `workType`
 
-## `fp.on(eventName:<String>, next:<Function>)`
+## fp.on
+
+`fp.on(eventName:<String>, next:<Function>)`
 
 As of today, the only supported event is `job-alert-created`, which is fired after the _Create Job Alert_ button is clicked.
 
