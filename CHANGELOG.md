@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.1](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.4.0...v0.4.1) (2019-10-28)
+
+
+### Features
+
+* Add better error messages for the submitForm method. ([d84c2ca](https://gitlab.com/neap/fairplay-widgetjs/commit/d84c2ca))
+
+
+
 ## [0.4.0](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.3.7...v0.4.0) (2019-07-12)
 
 
