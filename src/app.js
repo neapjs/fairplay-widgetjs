@@ -1592,8 +1592,9 @@ const Fairplay = function({ clientId, mode='prod', businessId, classifications, 
 						next(null, { status: (xhr || {}).status || 500, data })
 				},
 				error: function(xhr,_,error) {
+					xhr = xhr || {} 
 					if (next)
-						next({ status:(xhr || {}).status || 500, data:{ error } })
+						next({ status: xhr.status || 500, data:{ error: xhr.responseText || error } })
 				}
 			})
 		} catch (err) {
