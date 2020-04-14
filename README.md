@@ -296,6 +296,53 @@ fp.submitForm(formDOM, extraInputs,function(error,res) {
 
 ### Refer a friend
 
+```html
+<form onsubmit="referFriend(this, event)">
+	...
+</form>
+```
+
+```js
+function referFriend(form, event) {
+event.preventDefault();
+var formData = new FormData(form);
+
+var payload = {
+    offer: "Refer Friend",
+    type: "candidate",
+    firstName: formData.get("from_firstname"),
+    lastName: formData.get("from_lastname"),
+    email: formData.get("from_email"),
+    phone: formData.get("from_phone"),
+    message: formData.get("message"),
+    friend: {
+	firstName: formData.get("friend_firstname"),
+	lastName: formData.get("friend_lastname"),
+	email: formData.get("friend_email"),
+	phone: formData.get("friend_phone"),
+	profession: formData.get("friend_profession")
+    },
+    recipients:['nic@neap.co'], 
+    recipientsOnly: true
+}
+
+showSubmitting();
+
+fp.submitForm(form, payload, (error, res) => {
+    hideSubmitting()
+    if (error) {
+	var message = error && error.data && error.data.error && typeof(error.data.error) == 'string' ? error.data.error.split('\n')[0] : 'Unknown error'
+
+	console.log(message)
+    } else {
+	console.log(`Status: ${res.status}`)
+	console.log(`Data: ${res.data}`)
+
+	form.reset();
+    }
+})
+```
+
 ## fp.repo.profession.find
 
 `fp.repo.profession.find({ where:<Object> })`
