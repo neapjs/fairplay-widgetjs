@@ -5,12 +5,21 @@
 > * [API - Fairplay Object](#api---fairplay-object)
 >	- [getJobAds](#getjobads)
 >	- [submitForm](#submitform)
+>		- [Examples](#examples)
+>		- [Submitting resume](#submitting-resume)
+>		- [Submitting vacancy](#submitting-vacancy)
+>		- [Subscribing to job alerts](#subscribing-to-job-alerts)
+>		- [Contact us](#contact-us)
+>		- [Getting a free report](#getting-a-free-report)
+>		- [Apply to job](#apply-to-job)
+>		- [Refer a friend](#refer-a-friend)
 >	- [fp.repo.profession.find](#fprepoprofessionfind)
 >	- [fp.on](#fpon)
 > * [How To](#how-to)
->	- [How To Test Locally](#how-to-test-locally)
->	- [How To Compile The Code To ES5](#how-to-compile-the-code-to-es5)
->	- [How To Deploy A New Version](#how-to-deploy-a-new-version)
+>	- [How To Test Locally?](#how-to-test-locally)
+>	- [How To Compile The Code To ES5?](#how-to-compile-the-code-to-es5)
+>	- [How To Deploy A New Version?](#how-to-deploy-a-new-version)
+>	- [How to send email to specific recipients only?](#how-to-send-email-to-specific-recipients-only)
 > * [Annexes](#annexes)
 > * [JobAdder - Neap Board Categories](#jobadder-neap-board-categories)
 
@@ -201,10 +210,11 @@ var fp = new Fairplay({
 ```
 
 ## submitForm
+### Examples
 
 `fp.submitForm([formDOM:<Element>, event:<Event>, input:<Object>, next:<Function>])`
 
-### Example 01 - Using a Form Element
+#### Example 01 - Using a Form Element
 
 ```js
 document.getElementById('main-form').addEventListener('submit', function(event) {
@@ -220,7 +230,7 @@ document.getElementById('main-form').addEventListener('submit', function(event) 
 })
 ```
 
-### Example 02 - Adding Extra Fields On A Form Element
+#### Example 02 - Adding Extra Fields On A Form Element
 
 ```js
 var formDOM = document.getElementById('main-form')
@@ -228,7 +238,7 @@ var formDOM = document.getElementById('main-form')
 var extraInputs = { offer:'Submit Resume' }
 
 // As you can see we can also omit the 'event' input.
-fp.submitForm(formDOM,extraInputs,function(error,res) {
+fp.submitForm(formDOM, extraInputs,function(error,res) {
 	if (error) {
 		console.log('ERROR')
 		console.log(JSON.stringify(error))
@@ -239,7 +249,7 @@ fp.submitForm(formDOM,extraInputs,function(error,res) {
 })
 ```
 
-### Example 03 - Using Explicit Fields With No Form Element
+#### Example 03 - Using Explicit Fields With No Form Element
 
 ```js
 fp.submitForm({ firstName:'Nic', lastName:'Dao' }, function(error,res) {
@@ -252,6 +262,39 @@ fp.submitForm({ firstName:'Nic', lastName:'Dao' }, function(error,res) {
 	}
 })
 ```
+
+### Submitting resume
+
+```js
+var formDOM = document.getElementById('main-form')
+// Valid offers: 'Submit Resume', 'Submit Vacancy', 'Job Alert', 'Contact Us', 'Free Report', 'Apply Job', 'Refer Friend'
+var extraInputs = { 
+	offer:'Submit Resume' 
+}
+
+// As you can see we can also omit the 'event' input.
+fp.submitForm(formDOM, extraInputs,function(error,res) {
+	if (error) {
+		console.log('ERROR')
+		console.log(JSON.stringify(error))
+	} else {
+		console.log(`Status: ${res.status}`)
+		console.log(`Data: ${res.data}`)
+	}
+})
+```
+
+### Submitting vacancy
+
+### Subscribing to job alerts
+
+### Contact us
+
+### Getting a free report
+
+### Apply to job
+
+### Refer a friend
 
 ## fp.repo.profession.find
 
@@ -311,7 +354,7 @@ __Prod__: [http://localhost:8080/prod](http://localhost:8080/prod)
 
  Prod uses the minified/uglified ES5 version of the code (to see how to compile that code, jump to the  section). 
 
-## How To Compile The Code To ES5
+## How To Compile The Code To ES5?
 
 Simply run:
 
@@ -321,7 +364,7 @@ npm run build
 
 This will produce multiple artefacts under the __dist__ folder.
 
-## How To Deploy A New Version
+## How To Deploy A New Version?
 
 1. Make sure the code is linted properly: `npm run lint`
 2. Build all the artefacts: 
@@ -339,5 +382,29 @@ This will host the minified version to [https://cdn.jsdelivr.net/npm/@neap/fairp
 You can access that JS and the default CSS using a specific version as follow:
 * [https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.2.1/dist/fairplay.min.js](https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.2.1/dist/fairplay.min.js)
 * [https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.2.1/dist/fairplay.min.css](https://cdn.jsdelivr.net/npm/@neap/fairplay-widgetjs@0.2.1/dist/fairplay.min.css)
+
+## How to send email to specific recipients only?
+
+```js
+var formDOM = document.getElementById('main-form')
+// Valid offers: 'Submit Resume', 'Submit Vacancy', 'Job Alert', 'Contact Us', 'Free Report', 'Apply Job', 'Refer Friend'
+var extraInputs = { 
+	offer:'Submit Resume',
+	recipients:['somebody@example.com.au'], 
+	recipientsOnly: true
+}
+
+// As you can see we can also omit the 'event' input.
+fp.submitForm(formDOM, extraInputs,function(error,res) {
+	if (error) {
+		console.log('ERROR')
+		console.log(JSON.stringify(error))
+	} else {
+		console.log(`Status: ${res.status}`)
+		console.log(`Data: ${res.data}`)
+	}
+})
+```
+
 
 # Annexes
