@@ -265,30 +265,118 @@ fp.submitForm({ firstName:'Nic', lastName:'Dao' }, function(error,res) {
 
 ### Submitting resume
 
-```js
-var formDOM = document.getElementById('main-form')
-// Valid offers: 'Submit Resume', 'Submit Vacancy', 'Job Alert', 'Contact Us', 'Free Report', 'Apply Job', 'Refer Friend'
-var extraInputs = { 
-	offer:'Submit Resume' 
-}
+```html
+<form onsubmit="submitResume(this, event)">
+	...
+</form>
+```
 
-// As you can see we can also omit the 'event' input.
-fp.submitForm(formDOM, extraInputs,function(error,res) {
-	if (error) {
-		console.log('ERROR')
-		console.log(JSON.stringify(error))
-	} else {
+```js
+function submitResume(form, event) {
+	event.preventDefault();
+
+	// The assumption is that the form contains 'firstname', 'lastname', 'email', 'phone', 'message' and an attachement.
+	var payload = {
+	    offer: "Submit Resume",
+	    type: "candidate",
+	    recipients:['nic@neap.co'], 
+	    recipientsOnly: true
+	}
+
+	showSubmitting();
+
+	fp.submitForm(form, payload, (error, res) => {
+	    hideSubmitting()
+	    if (error) {
+		var logMsg = error && error.data && error.data.error && typeof(error.data.error) == 'string' ? error.data.error.split('\n')[0] : 'Unknown error'
+
+		console.log(logMsg)
+	    } else {
 		console.log(`Status: ${res.status}`)
 		console.log(`Data: ${res.data}`)
-	}
-})
+
+		form.reset();
+	    }
+	})
+}
 ```
 
 ### Submitting vacancy
 
+```html
+<form onsubmit="submitResume(this, event)">
+	...
+</form>
+```
+
+```js
+function submitResume(form, event) {
+	event.preventDefault();
+
+	// The assumption is that the form contains 'firstname', 'lastname', 'email', 'phone', 'message', 'profession_name', 'job_title' and an attachement.
+	var payload = {
+	    offer: "Submit Vacancy",
+	    type: "client",
+	    recipients:['nic@neap.co'], 
+	    recipientsOnly: true
+	}
+
+	showSubmitting();
+
+	fp.submitForm(form, payload, (error, res) => {
+	    hideSubmitting()
+	    if (error) {
+		var logMsg = error && error.data && error.data.error && typeof(error.data.error) == 'string' ? error.data.error.split('\n')[0] : 'Unknown error'
+
+		console.log(logMsg)
+	    } else {
+		console.log(`Status: ${res.status}`)
+		console.log(`Data: ${res.data}`)
+
+		form.reset();
+	    }
+	})
+}
+```
+
 ### Subscribing to job alerts
 
 ### Contact us
+
+```html
+<form onsubmit="contactUs(this, event)">
+	...
+</form>
+```
+
+```js
+function contactUs(form, event) {
+	event.preventDefault();
+
+	// The assumption is that the form contains 'firstname', 'lastname', 'email', 'phone', 'message'.
+	var payload = {
+	    offer: "Contact Us",
+	    recipients:['nic@neap.co'], 
+	    recipientsOnly: true
+	}
+
+	showSubmitting();
+
+	fp.submitForm(form, payload, (error, res) => {
+	    hideSubmitting()
+	    if (error) {
+		var logMsg = error && error.data && error.data.error && typeof(error.data.error) == 'string' ? error.data.error.split('\n')[0] : 'Unknown error'
+
+		console.log(logMsg)
+	    } else {
+		console.log(`Status: ${res.status}`)
+		console.log(`Data: ${res.data}`)
+
+		form.reset();
+	    }
+	})
+}
+```
 
 ### Getting a free report
 
