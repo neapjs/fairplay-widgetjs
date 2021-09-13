@@ -1331,12 +1331,40 @@ var fairplay = function(options) {
 
 	document.querySelector(el).innerHTML = document.querySelector(el).innerHTML + '<neap-widget :jobads="jobads" :filter="filter" :showjobalertbutton="showJobAlertButton"></neap-widget>'
 	
+	var placeholderJob = {
+		title: "",
+		company: "",
+		date: "",
+		summary: "",
+		bulletPoints: ["", "", ""],
+		location: {
+			name: "",
+			area: {
+				name: ""
+			},
+		},
+		salary: {
+			description: ""
+		},
+		workType: {
+			name: ""
+		},
+		profession: {
+			link: "",
+			role: {
+				link: ""
+			}
+		}
+	}
+
+	var initialJobsAds = [placeholderJob, placeholderJob, placeholderJob, placeholderJob, placeholderJob]
+
 	new Vue({
 		el: el,
 		data: {
-			allJobAds:[],
-			allFilteredJobAds:[],
-			jobads:[],
+			allJobAds:initialJobsAds,
+			allFilteredJobAds:initialJobsAds,
+			jobads:initialJobsAds,
 			filter:options.filter,
 			showJobAlertButton:options.jobAlert === undefined ? true : options.jobAlert
 		},
