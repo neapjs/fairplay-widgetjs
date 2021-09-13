@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.4.1...v0.5.0) (2021-09-13)
+
+
+### Bug Fixes
+
+* merge conflicts ([c29ff4c](https://gitlab.com/neap/fairplay-widgetjs/commit/c29ff4c041a1423d2022df9e17dfbd712f3a565d))
+
 ### [0.4.1](https://gitlab.com/neap/fairplay-widgetjs/compare/v0.4.0...v0.4.1) (2019-10-28)
 
 
