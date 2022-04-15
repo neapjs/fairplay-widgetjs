@@ -9,12 +9,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/neap/fairplay-widgetjs.git"
+    "url": "https://github.com/neapjs/fairplay-widgetjs.git"
   },
   "bugs": {
-    "url": "https://gitlab.com/neap/fairplay-widgetjs/issues"
+    "url": "https://github.com/neapjs/fairplay-widgetjs/issues"
   },
-  "homepage": "https://gitlab.com/neap/fairplay-widgetjs#readme",
+  "homepage": "https://github.com/neapjs/fairplay-widgetjs#readme",
   "scripts": {
     "dev": "WEBPACK_ENV=build webpack & NODE_ENV=dev node index.js",
     "build": "WEBPACK_ENV=build webpack && node src/scripts/minifyCss.js",
