@@ -440,7 +440,7 @@ function _fetchJobAds({ where }, options) {
 			if (ad.title)
 				pathname.push(_escapeJobCategoriesName(ad.title))
 			pathname.push(ad.id)
-			ad.link = JOB_AD_URL + '/' + pathname.join('/')
+			ad.link = JOB_AD_URL + '/' + pathname.join('/') + '/'
 
 			// 5. Create a profession search link:
 			if (ad.profession && ad.profession.id && ad.profession.name) {
@@ -1332,27 +1332,27 @@ var fairplay = function(options) {
 	document.querySelector(el).innerHTML = document.querySelector(el).innerHTML + '<neap-widget :jobads="jobads" :filter="filter" :showjobalertbutton="showJobAlertButton"></neap-widget>'
 	
 	var placeholderJob = {
-		title: "",
-		company: "",
-		date: "",
-		summary: "",
-		bulletPoints: ["", "", ""],
+		title: '',
+		company: '',
+		date: '',
+		summary: '',
+		bulletPoints: ['', '', ''],
 		location: {
-			name: "",
+			name: '',
 			area: {
-				name: ""
+				name: ''
 			},
 		},
 		salary: {
-			description: ""
+			description: ''
 		},
 		workType: {
-			name: ""
+			name: ''
 		},
 		profession: {
-			link: "",
+			link: '',
 			role: {
-				link: ""
+				link: ''
 			}
 		}
 	}
