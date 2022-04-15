@@ -508,7 +508,7 @@ This will produce multiple artefacts under the __dist__ folder.
 	npm run dev
 	npm run build
 	```
-3. Commit your changes: `git cm 'your message'`
+3. Commit your changes: `git commit 'your message'`
 4. Get the current verison: `npm run v`
 5. Bump to higher version: `npm run rls <the new version>`
 6. Publish: `npm run push`
@@ -541,6 +541,5 @@ fp.submitForm(formDOM, extraInputs,function(error,res) {
 	}
 })
 ```
-
 
 # Annexes
