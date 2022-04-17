@@ -277,9 +277,9 @@ function _escapeJobCategoriesName(name){
 /**
  * Gets a client's jobs.
  * 
- * @param  {String}   where.clientId		If 'mode' is equal to 'dev', this field is not required. 
- * @param  {String}   where.ownerId			Recruiter's ID. 
- * @param  {String}   where.ownerEmail		Recruiter's email. 
+ * @param  {String}   where.clientId						If 'mode' is equal to 'dev', this field is not required. 
+ * @param  {String}   where.ownerId							Recruiter's ID. 
+ * @param  {String}   where.ownerEmail						Recruiter's email. 
  * @param  {String}   where.jobId			
  * @param  {String}   where.professionId	
  * @param  {String}   where.roleId			
@@ -289,11 +289,12 @@ function _escapeJobCategoriesName(name){
  * @param  {String}   where.salary.per		
  * @param  {Float}    where.salary.lowest	
  * @param  {Float}    where.salary.highest	
- * @param  {String}   options.mode			Default is 'prod'. Valid values: 'dev' and 'prod'
- * @param  {Object}   options.categories	Renames and re-organizes the output categories (e.g., { 5843: 'Internet & Telco', 5821: 'Internet & Telco' } 
- *                                       	would rename categories 5843 and 5821 to 'Internet & Telco', and because they have the same name, they are
- *                                       	be grouped together.).
- * @param  {String}   options.fields		GraphQL fields (e.g., 'id, title, profession { id }')
+ * @param  {String}   options.mode							Default is 'prod'. Valid values: 'dev' and 'prod'
+ * @param  {Boolean}  options.addTrailingSlashToJobLinks	Default false. When true will append a trailing slash ('/') to job links.
+ * @param  {Object}   options.categories					Renames and re-organizes the output categories (e.g., { 5843: 'Internet & Telco', 5821: 'Internet & Telco' } 
+ *                                       					would rename categories 5843 and 5821 to 'Internet & Telco', and because they have the same name, they are
+ *                                       					be grouped together.).
+ * @param  {String}   options.fields						GraphQL fields (e.g., 'id, title, profession { id }')
  * @return {Number}   output.status
  * @return {[JobAds]} output.data         
  */
@@ -440,7 +441,7 @@ function _fetchJobAds({ where }, options) {
 			if (ad.title)
 				pathname.push(_escapeJobCategoriesName(ad.title))
 			pathname.push(ad.id)
-			ad.link = JOB_AD_URL + '/' + pathname.join('/') + '/'
+			ad.link = JOB_AD_URL + '/' + pathname.join('/') + (options.addTrailingSlashToJobLinks ? '/' : '')
 
 			// 5. Create a profession search link:
 			if (ad.profession && ad.profession.id && ad.profession.name) {
@@ -476,9 +477,9 @@ const _mapJobAds = data => (data || []).map(ad => {
 /**
  * Gets a client's jobs with retry mechanism.
  * 
- * @param  {String}   where.clientId		If 'mode' is equal to 'dev', this field is not required. 
- * @param  {String}   where.ownerId			Recruiter's ID. 
- * @param  {String}   where.ownerEmail		Recruiter's email. 
+ * @param  {String}   where.clientId							If 'mode' is equal to 'dev', this field is not required. 
+ * @param  {String}   where.ownerId								Recruiter's ID. 
+ * @param  {String}   where.ownerEmail							Recruiter's email. 
  * @param  {String}   where.jobId			
  * @param  {String}   where.professionId	
  * @param  {String}   where.roleId			
@@ -488,11 +489,12 @@ const _mapJobAds = data => (data || []).map(ad => {
  * @param  {String}   where.salary.per		
  * @param  {Float}    where.salary.lowest	
  * @param  {Float}    where.salary.highest	
- * @param  {String}   options.mode			Default is 'prod'. Valid values: 'dev' and 'prod'
- * @param  {Object}   options.categories	Renames and re-organizes the output categories (e.g., { 5843: 'Internet & Telco', 5821: 'Internet & Telco' } 
- *                                       	would rename categories 5843 and 5821 to 'Internet & Telco', and because they have the same name, they are
- *                                       	be grouped together.).
- * @return {[JobAds]}               		[description]
+ * @param  {String}   options.mode								Default is 'prod'. Valid values: 'dev' and 'prod'
+ * @param  {String}   options.addTrailingSlashToJobLinks		Default false. When true will append a trailing slash ('/') to job links.
+ * @param  {Object}   options.categories						Renames and re-organizes the output categories (e.g., { 5843: 'Internet & Telco', 5821: 'Internet & Telco' } 
+ *                                       						would rename categories 5843 and 5821 to 'Internet & Telco', and because they have the same name, they are
+ *                                       						be grouped together.).
+ * @return {[JobAds]}               							[description]
  */
 function _getJobAds({ where={} }, options={}) { 
 	options = options || {}
@@ -1299,6 +1301,7 @@ const _findClassification = (classifications, where) => {
  * @param  {String}  options.el									DOM under which the Fairplay widget is immediately attached (e.g., '#main'). 
  * @param  {String}  options.clientId							Required in when 'mode' is not equal to 'dev'. 
  * @param  {String}  options.mode								Default null. Valid value: 'dev'. If set to 'dev', the test API is used and the 'clientId' is not required.
+ * @param  {Boolean} options.addTrailingSlashToJobLinks			Default false. When true will append a trailing slash ('/') to job links.
  * @param  {Number}  options.pageSize				
  * @param  {Object}  options.categories							e.g., { 5843: 'Internet & Telco', 5821: 'Internet & Telco' }
  * @param  {Boolean} options.filter.toggled						Default is true.					
@@ -1522,7 +1525,7 @@ var fairplay = function(options) {
 	})
 }
 
-const Fairplay = function({ clientId, mode='prod', businessId, classifications, debug }) {
+const Fairplay = function({ clientId, mode='prod', businessId, classifications, debug, addTrailingSlashToJobLinks=false }) {
 	if (mode == 'prod' && !clientId)
 		throw new Error('Missing required argument \'clientId\'. In production mode (mode = \'prod\' or mode not set), \'clientId\' is required.')
 
@@ -1530,6 +1533,7 @@ const Fairplay = function({ clientId, mode='prod', businessId, classifications, 
 		options = options || {}
 		options.clientId = clientId
 		options.mode = mode
+		options.addTrailingSlashToJobLinks = addTrailingSlashToJobLinks
 		if (classifications)
 			options.classifications = classifications
 		fairplay(options)

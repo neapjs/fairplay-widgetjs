@@ -15,3 +15,6 @@ app.get('/prod', function(req, res) {
 
 
 app.listen(8080)
+
+console.log('Server running on port 8080')
+console.log('Open http://localhost:8080/dev or http://localhost:8080/prod')

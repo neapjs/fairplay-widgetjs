@@ -35,8 +35,9 @@
 	<script type="text/javascript">
 		const fp = new Fairplay({ 
 			//clientId:'1chfi-oqwg4-0ulzl-y36zv', 
-			mode:'dev', // Optional. When set to 'dev', the 'clientId' property is not required.
-			businessId:123
+			mode: 'dev', // Optional. When set to 'dev', the 'clientId' property is not required.
+			businessId: 123,
+			addTrailingSlashToJobLinks: true // Optional. When set to true the will add a trailing a slash ('/') to the job links.
 		})
 
 		// 1. Create the widget
