@@ -5,7 +5,7 @@ const webpack = require('webpack')
 
 const env = process.env.WEBPACK_ENV
 const outputfilename = "fairplay"
-const copyright = ''
+const banner = ''
 // /**
 //  * Copyright (c) 2019, Neap Pty Ltd.
 //  * All rights reserved.
@@ -19,13 +19,13 @@ const { plugins, outputfile } = env == "build"
     ? { 
         plugins: [
             new UglifyJSPlugin(), 
-            new webpack.BannerPlugin(copyright)
+            new webpack.BannerPlugin({ banner })
         ], 
         outputfile: `${outputfilename}.min.js` 
     } 
     : { 
         plugins: [
-            new webpack.BannerPlugin(copyright)
+            new webpack.BannerPlugin({ banner})
         ], 
         outputfile: `${outputfilename}.js` 
     } 
@@ -41,7 +41,7 @@ module.exports = {
         umdNamedDefine: true
     },
     module: {
-        loaders: [{
+        rules: [{
             loader: "babel-loader",
             exclude: [
                 path.resolve(__dirname, "node_modules")
